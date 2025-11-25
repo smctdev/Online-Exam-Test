@@ -3,14 +3,14 @@
 @section('head')
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <script>
-        window.Laravel = <?php echo json_encode([
+        window.Laravel = @json_encode([
             'csrfToken' => csrf_token(),
-        ]); ?>
+        ]);
     </script>
 @endsection
 @section('top_bar')
     <nav class="navbar navbar-default navbar-static-top">
-        <div class="logo-main-block">
+        {{-- <div class="logo-main-block">
             <div class="container">
                 @if ($setting)
                     <a href="{{ url('/') }}" title="{{ $setting->welcome_txt }}">
@@ -19,7 +19,7 @@
                     </a>
                 @endif
             </div>
-        </div>
+        </div> --}}
         <div class="nav-bar">
             <div class="container">
                 <div class="row">

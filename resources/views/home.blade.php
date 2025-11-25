@@ -2,21 +2,21 @@
 
 @section('top_bar')
     <!--<nav class="navbar navbar-default navbar-static-top">
-            <div class="nav-bar">
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="navbar-header">
-                       Branding Image
-                      @if ($setting)
+                        <div class="nav-bar">
+                          <div class="container">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="navbar-header">
+                                   Branding Image
+                                  @if ($setting)
     <img src="{{ asset('/images/vectors/samp.png') }}" class="login-logo img-responsive" alt="{{ $setting->welcome_txt }}">
     @endif
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </nav>--><br><br>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </nav>--><br><br>
 @endsection
 
 @section('content')
@@ -56,8 +56,8 @@
                                             <i class="fa fa-envelope"></i> <span>Verify Email</span>
                                         </button>
                                     </form>
-
                                 </div>
+                                <a href="{{ route('logout') }}" class="btn btn-danger" style="width: 80%; margin-top: 10px;">Logout</a>
                                 <div id="verifycode" style="display: none">
                                     <p>Verification code was sent to your email.</p>
                                     <p>Did not recieve a code: <a id="resend" style="cursor:pointer">Resend Code</a></p>
@@ -85,6 +85,13 @@
 
 @section('scripts')
     <script>
+        const isProduction = @json(config('app.env') === 'production');
+        const verify = isProduction ? @json(route('verify.email')).replace('http://', 'https://') :
+            @json(route('verify.email'));
+        const check = isProduction ? @json(route('check.code')).replace('http://', 'https://') :
+            @json(route('check.code'));
+        const startQuiz = isProduction ? @json(route('start_quiz')).replace('http://', 'https://') :
+            @json(route('start_quiz'));
         $(document).ready(function() {
             $('#resend').on('click', function() {
                 $('#sendForm').submit();
@@ -96,7 +103,7 @@
                 $(this).find('button').children('i').removeClass("fa fa-envelope").addClass(
                     "fa fa-spinner fa-pulse fa-fw");
                 $.ajax({
-                    url: "{{ route('verify.email') }}",
+                    url: verify,
                     type: "POST",
                     cache: false,
                     dataType: 'json',
@@ -128,7 +135,7 @@
                 formID.find('button').children('i').removeClass("fa fa-check-circle").addClass(
                     "fa fa-spinner fa-pulse fa-fw");
                 $.ajax({
-                    url: "{{ route('check.code') }}",
+                    url: check,
                     type: "GET",
                     cache: false,
                     dataType: 'json',
@@ -139,7 +146,7 @@
                     success: function(response) {
                         if (response.success) {
                             $('#codeError').hide();
-                            window.location.href = "{{ route('start_quiz') }}";
+                            window.location.href = startQuiz;
 
                         } else {
                             $('#codeError').show();

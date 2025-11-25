@@ -90,7 +90,7 @@
           @endif
         </div>
         <h4 class="user-register-heading text-center">Reset Password</h4>
-      
+
          <form class="form-horizontal" method="POST" action="{{ route('password.request') }}">
                         {{ csrf_field() }}
 
@@ -110,7 +110,7 @@
                                 @endif
                             </div>
                           </div>
-                            
+
                         </div>
 
                         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
@@ -127,7 +127,7 @@
                                 @endif
                             </div>
                           </div>
-                           
+
                         </div>
 
                         <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
@@ -143,7 +143,7 @@
                                 @endif
                             </div>
                           </div>
-                            
+
                         </div>
 
                         <div class="form-group">
@@ -156,7 +156,7 @@
                     </form>
       </div>
     </div>
-  </div>    
+  </div>
 @endsection
 
 @section('scripts')

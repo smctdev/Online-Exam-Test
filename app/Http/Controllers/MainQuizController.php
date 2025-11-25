@@ -44,6 +44,7 @@ class MainQuizController extends Controller
         $input['user_id'] = $user->id;
         $match = ['question_id' => $input['question_id'], 'user_id' => $user->id, 'topic_id' => $input['topic_id']];
         $x = Answer::where($match)->first();
+
         if (is_null($input['user_answer']) && is_null($input['answer_exp'])) {
             TempAnswer::where($match)->update(['status' => $input['status']]);
             $newdata = collect();
@@ -75,7 +76,7 @@ class MainQuizController extends Controller
 
     public function show($id)
     {
-        $auth = Auth::user()->token;
+        $auth = Auth::user()?->token;
 
         if (!Helper::hasResult($auth)) {
             $topic = Topic::findOrFail($id);
@@ -86,7 +87,7 @@ class MainQuizController extends Controller
             $questions = collect();
             $count = Exam::where('user_id', '=', $user->id)->select('exam')->get();
             $count = explode(",", $count[0]['exam']);
-            $questions = Question::where('topic_id', $topic->id)->select('topic_id', 'id', 'question', 'choices', 'question_img', 'underline', 'type', 'code_snippet')->get();
+            $questions = Question::with('topic')->where('topic_id', $topic->id)->select('topic_id', 'id', 'question', 'choices', 'question_img', 'underline', 'type', 'code_snippet')->get();
             foreach ($questions as $key => $value) {
                 $quesTitle = $value->question;
 

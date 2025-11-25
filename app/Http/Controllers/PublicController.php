@@ -23,7 +23,7 @@ class PublicController extends Controller
 {
     public function index()
     {
-        if (Session::has('status')) {
+        if (Auth::user()?->status !== "finish") {
             return view('errors.expired');
         }
         return view('finish');

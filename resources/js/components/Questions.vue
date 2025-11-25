@@ -131,7 +131,10 @@
                                 Choices
                             </p>
                         </div>
-                        <div class="choices-box">
+                        <div
+                            class="choices-box"
+                            v-if="question.type == 'multiple'"
+                        >
                             <div
                                 v-for="(choices, indx) in JSON.parse(
                                     question.choices
@@ -162,28 +165,29 @@
                             >
                                 <button
                                     type="submit"
-                                    class="btn btn-block nextbtn"
+                                    class="btn btn-block nextbtn btn-primary"
                                     @click="status('save')"
                                     :disabled="isSelected"
+                                    style="margin-top: 5px;"
                                 >
-                                    Save
+                                    <span v-if="fcount != questions.length">Next</span><span v-else>Save</span>
                                 </button>
                                 <button
                                     type="submit"
-                                    class="btn btn-block nextbtn"
+                                    class="btn btn-block btn-warning nextbtn"
                                     @click="status('review')"
                                     :disabled="isSelected"
                                 >
-                                    Review
+                                    <span>Review</span>
                                 </button>
                                 <button
                                     type="submit"
                                     v-if="fcount != questions.length"
-                                    class="btn btn-block nextbtn"
+                                    class="btn btn-block nextbtn btn-danger"
                                     @click="status('skipped')"
                                     :disabled="isDisabled"
                                 >
-                                    Skip
+                                    <span>Skip</span>
                                 </button>
                                 <button
                                     type="submit"
@@ -191,9 +195,9 @@
                                         fcount == questions.length &&
                                         topic_id != topics[topics.length - 1]
                                     "
-                                    class="btn btn-block submitBtn"
+                                    class="btn btn-block submitBtn btn-success"
                                 >
-                                    Proceed
+                                    <span>Proceed</span>
                                 </button>
                                 <button
                                     type="submit"
@@ -201,9 +205,9 @@
                                         fcount == questions.length &&
                                         topic_id == topics[topics.length - 1]
                                     "
-                                    class="btn btn-block submitBtn"
+                                    class="btn btn-block submitBtn btn-success"
                                 >
-                                    Submit
+                                    <span>Submit</span>
                                 </button>
                             </div>
                             <div class="col-md-2 col-xs-8"></div>
@@ -349,7 +353,7 @@ export default {
 
     methods: {
         fetchQuestions() {
-            this.$http
+            axios
                 .get(`${this.$props.topic_id}/quiz/${this.$props.topic_id}`)
                 .then((response) => {
                     this.questions = response.data.questions;
@@ -372,7 +376,7 @@ export default {
             this.result.question_id = id;
             this.result.user_id = this.auth;
             this.result.topic_id = this.$props.topic_id;
-            this.$http
+            axios
                 .post(`${this.$props.topic_id}/quiz`, this.result)
                 .then((response) => {
                     let newdata = response.data.newdata;

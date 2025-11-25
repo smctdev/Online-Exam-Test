@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <div style="display:flex;">
-            <img src="{{ asset('/images/vectors/woman.png') }}" style="width:22%;margin-left:-300px;">
+            <img src="{{ asset('images/vectors/woman.png') }}" style="width:22%;margin-left:-300px;">
             <div style="flex-grow: 2">
                 @php
                     $fname = Session::get('fname');
@@ -11,7 +11,7 @@
                 @endphp
                 <h2 class="name" style="display:none;">Welcome, <span style="color:yellow">{{ ucwords($fname) }}</span> !
                 </h2>
-                <h4 class="h-title" style="color: white;display:none;";>Before getting started, please read all the
+                <h4 class="h-title" style="color: white;display:none;">Before getting started, please read all the
                     instructions carefully.</h4>
                 <br>
                 <div class="row">
@@ -59,9 +59,11 @@
                                 <div class="text-center" style="color: white;"><input type="checkbox" name="read"
                                         id="read" style="cursor:pointer;">&nbsp;I already read and fully understand the
                                     guidelines. </div>
-                                <center><a id ="startexam"class="btn btn-success btn-lg float-right"
+                                <div class="text-center">
+                                    <a id ="startexam"class="btn btn-success btn-lg float-right text-center"
                                         style="width: 30%; pointer-events: none" disabled
-                                        href="{{ route('category_title', $topic[0]['slug']) }}">Start Exam</a></center>
+                                        href="{{ route('category_title', $topic[0]['slug']) }}">Start Exam</a>
+                                </div>
                             </div><br>
                         @endif
                     </div>
@@ -70,7 +72,6 @@
             </div>
         </div>
     </div>
-
     <script>
         $(document).ready(function() {
             $("img").animate({

@@ -43,7 +43,7 @@
                 90%,100% { -webkit-opacity: 1; opacity: 1; -webkit-transform: scale(1.2); transform: scale(1.2); border-radius: 999999px;}
             }
             .spin-earth-on-hover{
-    
+
                 transition: ease 200s !important;
                 transform: rotate(-3600deg) !important;
             }
@@ -172,7 +172,7 @@
                 text-decoration: none;
                 letter-spacing : 2px;
                 font-size: 11px;
-                
+
                 -webkit-transition: all 0.3s ease-in;
                 -moz-transition: all 0.3s ease-in;
                 -ms-transition: all 0.3s ease-in;
@@ -187,11 +187,11 @@
                 box-shadow: 0px 20px 20px rgba(0,0,0,0.1);
             }
             @media only screen and (max-width: 600px){
-            
+
                 .box_astronaut{
                     top: 70%;
                 }
-                
+
                 .central-body{
                     padding-top: 25%;
                 }
@@ -203,7 +203,7 @@
         <div class="stars">
             <div class="central-body">
                 <img class="image-404" src="{{asset('images/vectors/404.svg')}}" width="300px">
-                <a href="https://smctgroup.com" class="btn-go-home">GO BACK TO EARTH</a>
+                <a href="/" class="btn-go-home">GO BACK TO EARTH</a>
             </div>
             <div class="objects">
                 <img class="object_rocket" src="{{asset('images/vectors/rocket.svg')}}" width="40px">

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Result;
 use App\Models\Exam;
 use App\Models\TempAnswer;
+use Illuminate\Support\Facades\DB;
 use Session;
 
 class Helper
@@ -92,10 +93,10 @@ class Helper
         }
         if (!empty($computed)) {
             $arr[] = ['user_id' => $user->id, 'score' => json_encode($computed)];
-            \DB::table('result')->insert($arr);
+            DB::table('result')->insert($arr);
         }
         if (!empty($eArray)) {
-            \DB::table('essay')->insert($eArray);
+            DB::table('essay')->insert($eArray);
         }
         Answer::where('user_id', $user->id)->delete();
         TempAnswer::where('user_id', $user->id)->delete();
@@ -115,7 +116,7 @@ class Helper
     {
         $user = User::where('token', $token)->select('id')->get();
         $user = $user[0];
-        $result = \DB::table('result')->where('user_id', $user->id)->first();
+        $result = DB::table('result')->where('user_id', $user->id)->first();
         if ($result)
             return true;
         else

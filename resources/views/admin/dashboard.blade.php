@@ -72,7 +72,7 @@
         <h5>Notification Panel</h5>
         <div class="notify-panel-box">
           @if(!empty($notify))
-          <ul class="box-flex">
+          <ul class="d-flex gap-2">
             @foreach ($notify  as $key)
             <li>
               <a href="javascript:ajaxCall('{{route('exam.result', ['id' => $key->id])}}','exam-result')">

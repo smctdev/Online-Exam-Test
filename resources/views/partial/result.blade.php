@@ -21,14 +21,14 @@
 		  $x++;
 		}
 	}
-    
+
 @endphp
 <div id="situationModal" class="modal fade" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button class="btn btn-default btn-sm pull-right" id="btnprint"><span class="glyphicon glyphicon-print" title="Print"></span></button>
-        <button class="btn btn-default btn-sm pull-right mr-3" onclick="exportPDF('{{route('situation.pdf')}}',{{$user->id}})"><span class="glyphicon glyphicon-save-file" title="Save as PDF"></span></button>     
+        <button class="btn btn-default btn-sm pull-right mr-3" onclick="exportPDF('{{route('situation.pdf')}}',{{$user->id}})"><span class="glyphicon glyphicon-save-file" title="Save as PDF"></span></button>
       </div>
         <div class="modal-body" id="printJS-form">
           <pre id="pname" style="display:none;">   Applicant Name: <b>{{ucwords($user->name)}}</b></pre>
@@ -36,7 +36,7 @@
           <ol>
             @foreach ( $essay as $es )
             <li>
-				      <p>{{$es->situation}}</p>	
+				      <p>{{$es->situation}}</p>
               <p><b>Answer:</b></p>
               <div> <pre style="white-space:pre-wrap">{{$es->answer}}</pre></div>
             </li>
@@ -108,9 +108,9 @@
   <select id='selUser' style='width: 200px;'>
     @if ($users)
     @foreach ($users as $key => $user_list)
-      <option value='{{$user_list->id}}'>{{$user_list->name}}</option>  
+      <option value='{{$user_list->id}}'>{{$user_list->name}}</option>
     @endforeach
-  @endif 
+  @endif
   </select>
   <br><br><br>
   <div class="row " id="printResult">
@@ -147,7 +147,7 @@
                 $finalStats = ($average>=75)?'Passed':'Failed';
                 $percentage = round($exam['score']/$exam['max']*100,2);
                 $status =($percentage>=75)?'Passed':'Failed';
-                
+
               @endphp
               <tr>
                 <th scope="row">{{$subject}}</th>
@@ -171,7 +171,7 @@
 		  @endif
           <center><button class="btn btn-warning" data-toggle="modal" data-target="#situationModal">Reading Comprehension Answers.</button></center>
         </div>
-		
+
         <div class="col-md-3 text-center " >
 		@if(!empty($semi_result))
           <br>
@@ -184,7 +184,7 @@
     </div>
     <div class="col-md-1"></div>
   </div>
-  
+
 </div>
 <script>
 
@@ -328,7 +328,7 @@ Chart.pluginService.register({
         });
     }
   $(function () {
-    $( document ).ready(function() { 
+    $( document ).ready(function() {
        $("#selUser").select2();
        $("#selUser").on('change', function (e) {
          var id = $("#selUser").val();

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Exam;
 use App\Models\Verification;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class EmailController extends Controller
 {
@@ -44,7 +45,7 @@ class EmailController extends Controller
     {
         $data = User::where('email', $request->input('email'))->get();
         $data = $data[0];
-        $data['code'] = substr(md5(mt_rand()), 17, 8);
+        $data['code'] = Str::upper(Str::random(6));
         $x = Verification::where('user_token', $data['id'])->first();
         if ($x != null) {
 
@@ -53,7 +54,6 @@ class EmailController extends Controller
             Verification::create([
                 'user_token' => $data['id'],
                 'code' => $data['code'],
-
             ]);
         }
 

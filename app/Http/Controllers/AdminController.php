@@ -41,7 +41,7 @@ class AdminController extends Controller
     public function apptitude($slug)
     {
         $topic = Topic::where('slug', $slug)->first();
-        $auth = Auth::user()->token;
+        $auth = Auth::user()?->token;
 
         if (!Helper::hasResult($auth)) {
             $answers = Answer::where('topic_id', '=', $topic->topic_id)->first();
@@ -53,7 +53,11 @@ class AdminController extends Controller
 
     public function startquiz()
     {
-        $auth = Auth::user()->token;
+        $auth = Auth::user()?->token;
+
+        if (!$auth) {
+            return redirect()->route('login');
+        }
 
         if (!Helper::hasResult($auth)) {
             $exam_user = User::where('token', $auth)->select('id')->get();
@@ -80,7 +84,7 @@ class AdminController extends Controller
     {
         $auth = Auth::user()->token;
         if (!Helper::hasResult($auth)) {
-            $topic = Topic::where('slug', $slug)->first();
+            $topic = Topic::withCount('question')->where('slug', $slug)->first();
             $user_id = User::where('token', $auth)->select('id')->get();
             $started = Exam::where('user_id', $user_id[0]['id'])->select('started_at')->get();
             if (empty($started[0]['started_at'])) {

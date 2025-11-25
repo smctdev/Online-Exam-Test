@@ -28,7 +28,7 @@ Route::group(['middleware' => ['isadmin', 'prevent-back-history']], function () 
     Route::get('examinee/exam/results/{id?}', [AdminController::class, 'getResult'])->name('exam.result');
     //Route::delete('reset/response/{topicid}/{userid}','AllReportController@delete');
     Route::get('/admin/examinees', [AdminController::class, 'applicants']);
-    Route::get('/admin/admin_list', [AdminController::class, 'adminlist']);
+    Route::get('/admin/admin_list', [AdminController::class, 'adminlist'])->name('admin.list');
     Route::resource('/admin/topics', TopicController::class);
     Route::resource('/admin/questions', QuestionsController::class);
     Route::resource('/admin/answers', AnswersController::class);
@@ -56,7 +56,7 @@ Route::group(['middleware' => 'checkResult'], function () {
 Route::get('online-assesment/completed', [PublicController::class, 'index'])->name('exam.completed');
 Route::get('online-assessment/verify-email/{id}', [AdminController::class, 'examinee'])->name('examinee');
 Route::group(['middleware' => 'checkResult'], function () {
-    Route::resource('online-assessment/category/{id?}/quiz', MainQuizController::class);
+    Route::resource('online-assessment/category/{id}/quiz', MainQuizController::class);
 });
 
 Route::view('/404/page-not-found', 'errors.404')->name('404');
@@ -74,3 +74,10 @@ Route::post('admin/mail-settings', [Configcontroller::class, 'changeMailEnvKeys'
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+Route::redirect('/start-exam', 'online-assessment/welcome/instructions');
+
+Route::get('/logout', function () {
+    Auth::logout();
+    return redirect('/');
+})->middleware('auth')->name('logout');
