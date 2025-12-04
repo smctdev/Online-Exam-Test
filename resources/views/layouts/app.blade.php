@@ -13,7 +13,7 @@
         href="{{ asset('images/logo/' . $setting ? $setting['favicon'] : 'favicon.ico') }}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/css/smart_wizard_all.min.css" rel="stylesheet"
@@ -28,7 +28,7 @@
     <script>
         window.Laravel = @json(['csrfToken' => csrf_token()]);
     </script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
     <title>SMCT Online Exam</title>
 </head>
