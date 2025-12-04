@@ -1,0 +1,40 @@
+services:
+  online-exam:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: online-exam
+    container_name: online-exam
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+      - ./default.conf:/etc/nginx/nginx.conf
+
+    networks:
+      - online-exam
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: 172.17.0.1
+      DB_PORT: 3306
+      DB_DATABASE: online_exam
+      DB_USERNAME: smct
+      DB_PASSWORD: smct
+    # command: php artisan queue:listen --tries=1
+
+  online-exam-nginx:
+    image: nginx:alpine
+    container_name: online-exam-nginx
+    restart: unless-stopped
+    ports:
+      - 7050:7050
+    volumes:
+      - ./docker-compose/nginx/default.conf:/etc/nginx/nginx.conf
+      - ./:/var/www
+
+    networks:
+      - online-exam
+
+networks:
+  online-exam:
+    driver: bridge
