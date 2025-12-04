@@ -8,10 +8,9 @@ services:
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
-      - /home/webserver/systems/Online-Exam-Test/.env:/var/www/.env
       - ./:/var/www
       - ./default.conf:/etc/nginx/conf.d/default.conf
-      - ./database:/var/www/database
+
     networks:
       - online-exam
     environment:
@@ -21,8 +20,7 @@ services:
       DB_DATABASE: online_exam
       DB_USERNAME: smct
       DB_PASSWORD: smct
-      REDIS_HOST: 172.17.0.1
-      REDIS_PORT: 6379
+    # command: php artisan queue:listen --tries=1
 
   online-exam-nginx:
     image: nginx:alpine
@@ -33,6 +31,7 @@ services:
     volumes:
       - ./default.conf:/etc/nginx/conf.d/default.conf
       - ./:/var/www
+
     networks:
       - online-exam
 
