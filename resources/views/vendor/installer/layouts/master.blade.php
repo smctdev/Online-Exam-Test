@@ -17,7 +17,7 @@
     <link rel="icon" type="image/png" href="{{ asset('installer/img/favicon/favicon-96x96.png') }}"
         sizes="96x96" />
     <link href="{{ asset('installer/css/style.min.css') }}" rel="stylesheet" />
-    @vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partial.scripts')
     @yield('style')
     <script>
