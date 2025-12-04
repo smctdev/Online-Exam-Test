@@ -10,19 +10,27 @@ RUN apk --no-cache add \
     libzip-dev \
     zip \
     unzip \
+    npm \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-configure zip \
     && docker-php-ext-install gd \
     && docker-php-ext-install pdo pdo_mysql zip
 
-# Install Composer (Laravel's dependency manager)
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Set working directory
 WORKDIR /var/www
 
-# Copy your Laravel project into the container
-COPY . /var/www
+COPY ./package*.json ./
+
+# Install the dependencies
+RUN npm install
+
+COPY . .
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Build the application
+RUN npm run build
+
 
 # Install composer dependencies (optional - you can also do this during build)
 # RUN composer install --no-dev --optimize-autoloader
