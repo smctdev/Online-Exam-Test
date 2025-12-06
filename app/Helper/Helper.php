@@ -54,7 +54,7 @@ class Helper
         $exam = Exam::where('user_id', '=', $user->id)->select('exam')->get();
         $exam = $exam[0]['exam'];
         $exam = explode(",", $exam);
-        $topics = Topic::all();
+        $topics = Topic::whereHas('question')->get();
 
         foreach ($topics as $topic) {
 
@@ -76,7 +76,7 @@ class Helper
                                         }
                                     } else {
                                         if ($quesVal->id == $ansVal->question_id) {
-                                            $eArray[] = ['topic_id' => $topic->id, 'user_id' => $user->id, 'situation' => ($ansVal->user_answer != null) ? $ansVal->user_answer : $quesVal->question, 'answer' => $ansVal->answer_exp];
+                                            $eArray[] = ['topic_id' => $topic->id, 'user_id' => $user->id, 'situation' => ($ansVal->user_answer != null) ? $ansVal->user_answer : $quesVal->question, 'answer' => $ansVal->answer_exp, 'created_at' => now(), 'updated_at' => now()];
                                             break;
                                         }
                                     }
@@ -95,7 +95,7 @@ class Helper
             }
         }
         if (!empty($computed)) {
-            $arr[] = ['user_id' => $user->id, 'score' => json_encode($computed)];
+            $arr[] = ['user_id' => $user->id, 'score' => json_encode($computed), 'created_at' => now(), 'updated_at' => now()];
             DB::table('result')->insert($arr);
         }
         if (!empty($eArray)) {

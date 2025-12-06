@@ -22,8 +22,8 @@ class PublicApiController extends Controller
         $id = $request->id;
         $data = User::where('id', '=', $id)->get();
         $color = Color::where('user_id', $id)->select('profile_color')->get();
-        $data = $data[0];
-        $color = $color[0];
+        $data = $data[0] ?? "";
+        $color = $color[0] ?? "";
         $fl = substr($data->name, 0, 1);
         $array = compact('data', 'color', 'fl');
         return response()->json($array);

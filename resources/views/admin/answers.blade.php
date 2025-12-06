@@ -38,13 +38,13 @@
                 <td>{{$answer->answer}}</td>
                 <td>
                   <!-- Delete Button -->
-                  <a type="button" class="btn btn-info btn-xs btn-danger" data-toggle="modal" data-target="#{{$answer->id}}deleteModal"><i class="fa fa-close"></i> Delete</a>
+                  <a type="button" class="btn btn-info btn-xs btn-danger" data-bs-toggle="modal" data-bs-target="#{{$answer->id}}deleteModal"><i class="fa fa-close"></i> Delete</a>
                   <div id="{{$answer->id}}deleteModal" class="delete-modal modal fade" role="dialog">
                     <!-- Delete Modal -->
                     <div class="modal-dialog modal-sm">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                           <div class="delete-icon"></div>
                         </div>
                         <div class="modal-body text-center">

@@ -73,7 +73,7 @@ class User extends Authenticatable
 
     public function result()
     {
-        return $this->hasOne(Result::class);
+        return $this->hasOne(Result::class, 'user_id');
     }
 
     public function color()
@@ -96,12 +96,6 @@ class User extends Authenticatable
 
     public function is_admin()
     {
-        if (Auth::check()) {
-            if (Auth::user()->role == 'S') {
-                return true;
-            }
-            return false;
-        }
-        return false;
+        return $this->role === "S";
     }
 }

@@ -1,7 +1,4 @@
 @extends('layouts.app')
-@section('top_bar')
-    @include('includes.app_nav')
-@endsection
 @section('content')
     <?php
     $auth = Auth::user()?->token;
@@ -20,7 +17,7 @@
     $progessWidth = 100 / count($tID);
     ?>
 
-    <div class="container-fluid">
+    <div class="container-fluid py-4">
         @php
             for ($x = 0; $x < count($tID); $x++) {
                 foreach ($topics as $item) {
@@ -33,36 +30,108 @@
             }
         @endphp
 
-        <div class="home-main-block">
-
+        <div class="exam-container">
             @if (!empty($users))
-                <div class="alert alert-danger">
-                    You have already Given the test ! Try to give other Quizes
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Already Attempted!</strong> You have already given the test! Try other quizzes.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @else
+                <!-- Timer Section -->
+                @if (!empty($que))
+                    <div class="timer-section mb-4 sticky-top">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="col-4">
+                                        <p class="text-muted mb-0 fw-bolder fs-4">Topic:</p>
+                                        <p class="text-muted mb-0 fs-4">{{ $topic->title }}</p>
+                                    </div>
+                                    <div class="text-center d-flex flex-column col-4">
+                                        <h5 class="card-title mb-1 fs-3 text-warning fw-bolder">Time Remaining</h5>
+                                        <div id="clock" class="display-6 fw-bold text-warning"></div>
+                                        <small class="text-muted fs-4 fw-bold ">HH:MM:SS</small>
+                                    </div>
+                                    <div class="text-end col-4">
+                                        <span class="badge bg-primary fs-4">Question
+                                            <span id="currentQuestion">1</span>/{{ sizeof($que2) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Question Area -->
                 <div id="question_block" class="question-block">
                     <question ref="foo" :topic_id="{{ $topic->id }}"></question>
                 </div>
             @endif
+
             @if (empty($que))
-                <div class="alert alert-danger">
-                    No Questions in this quiz
+                <div class="min-vh-100 d-flex flex-column justify-content-center align-items-center py-5">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-6 col-md-8 col-sm-10">
+                                <!-- Alert Message -->
+                                <div class="alert alert-warning alert-dismissible fade show text-center shadow-sm"
+                                    role="alert">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <div class="mb-3">
+                                            <i class="bi bi-exclamation-triangle-fill fs-1 text-warning"></i>
+                                        </div>
+                                        <h4 class="alert-heading mb-2">No Questions Available!</h4>
+                                        <p class="mb-3">This quiz currently has no questions. You may safely click Finish
+                                            Exam; your score will be submitted automatically.</p>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                </div>
+
+                                <!-- Finish Exam Button -->
+                                <div class="text-center mt-4">
+                                    <form id="finishExam" method="GET" class="d-inline-block">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary btn-lg px-5 py-3 shadow-sm">
+                                            <i class="bi bi-check-circle-fill me-2"></i>
+                                            Finish Exam
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>
     </div>
-    <br /><br />
 @endsection
-@section('scripts')
-    <!-- jQuery 3 -->
 
-    <!-- Bootstrap 3.3.7 -->
-    {{-- <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.cookie.js') }}"></script>
-    <script src="{{ asset('js/jquery.countdown.js') }}"></script> --}}
+@push('scripts')
     <script>
         $(document).on('click', '.review-btn', function(event) {
             $(".sidepanel").slideToggle("fast");
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('finishExam').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'GET',
+                    beforeSend: function() {
+                        $('.ajax-loader').css("visibility", "visible");
+                    },
+                    url: '/calculate',
+                    success: function(data) {
+                        $('.ajax-loader').css("visibility", "hidden");
+                        location.href = @json(route('exam.completed'));
+                        Cookies.remove("time");
+                    }
+                });
+            });
         });
     </script>
 
@@ -98,6 +167,7 @@
                         } else {
                             active.removeClass("active");
                             active.next().addClass("active");
+                            $('#currentQuestion').text(queIndex + 1);
                         }
 
                         setTimeout(function() {
@@ -120,6 +190,7 @@
 
                         active.removeClass("active");
                         $(indx).addClass("active");
+                        $('#currentQuestion').text(i + 1);
 
                         setTimeout(function() {
                             if (window.App && App.$refs && App.$refs.foo) {
@@ -179,7 +250,6 @@
                     }, 1000);
                 }
 
-
                 // ============================
                 // PURE JS COUNTDOWN (NO PLUGIN)
                 // ============================
@@ -195,11 +265,12 @@
                         // Time expired
                         if (diff <= 0) {
                             clearInterval(interval);
-                            clock.html("<span>Time's Up!</span>");
+                            clock.html("<span class='text-danger'>Time's Up!</span>");
                             Swal.fire({
                                 icon: 'info',
                                 title: "Time's Up!",
                                 text: "Time's up! This exam is over and auto submitted.",
+                                confirmButtonColor: '#3085d6',
                             })
                             check();
                             return;
@@ -243,7 +314,7 @@
             });
         </script>
 
-        <script>
+        {{-- <script>
             var count = 0;
             $(document).ready(function() {
                 var body = document.querySelector('body');
@@ -261,6 +332,7 @@
                                 icon: 'warning',
                                 title: 'Violation Warning!',
                                 text: `Warning: Please avoid opening new tab or new browser! Violation: ${count}/5`,
+                                confirmButtonColor: '#3085d6',
                             });
                         } else {
                             $.ajax({
@@ -280,7 +352,7 @@
                 }
                 body.onblur = checkPageFocus;
             });
-        </script>
+        </script> --}}
     @else
         {{ '' }}
     @endif
@@ -319,4 +391,20 @@
             // end all controller is disable
         </script>
     @endif
-@endsection
+@endpush
+
+<style>
+    .exam-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .timer-section .card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .timer-section .text-muted {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+</style>

@@ -6,6 +6,7 @@ use App\Helper\Helper;
 use Illuminate\Http\Request;
 use App\Models\Topic;
 use App\Models\Question;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -21,8 +22,10 @@ class QuestionsController extends Controller
     {
         $topics = Topic::all();
         $questions = Question::all();
-        $notify = DB::table('users')->where('notify', 1)->get();
-        $notify = $notify->toArray();
+        $notify = User::with('result')
+            ->whereHas('result')
+            ->where('notify', 1)
+            ->get();
         if ($request->ajax()) {
             return view('admin.questions.index', compact('questions', 'topics', 'notify'))->renderSections()['content'];
         }
@@ -125,8 +128,10 @@ class QuestionsController extends Controller
     {
         $topic = Topic::findOrFail($id);
         $questions = Question::where('topic_id', $topic->id)->get();
-        $notify = DB::table('users')->where('notify', 1)->get();
-        $notify = $notify->toArray();
+        $notify = User::with('result')
+            ->whereHas('result')
+            ->where('notify', 1)
+            ->get();
         return view('admin.questions.show', compact('topic', 'questions', 'notify'));
     }
 
