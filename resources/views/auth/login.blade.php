@@ -19,7 +19,7 @@
             @endif
 
             <div class="row justify-content-center align-items-center">
-                <div class="col-lg-6 d-none d-lg-block">
+                <div class="col-lg-7 d-none d-lg-block">
                     <div class="text-center mb-5">
                         <img src="{{ asset('images/vectors/smct logo.png') }}" class="img-fluid mb-4"
                             style="max-width: 600px;" alt="Strong Moto Centrum">

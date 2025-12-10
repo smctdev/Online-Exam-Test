@@ -19,7 +19,7 @@
                     <div class="text-center mb-5">
                         @if ($setting)
                             <a href="{{ url('/') }}" title="{{ $setting->welcome_txt }}" class="text-decoration-none">
-                                <img src="{{ asset('images/logo/' . $setting->logo) }}" class="img-fluid mb-4"
+                                <img src="{{ asset('images/logo/' . $setting->logo) }}" class="img-fluid mb-4 mx-auto"
                                     style="max-width: 300px;" alt="{{ $setting->welcome_txt }}">
                             </a>
                         @endif
