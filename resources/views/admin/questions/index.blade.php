@@ -229,8 +229,7 @@
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form method="POST"
-                                    action="{{ action([App\Http\Controllers\TopicController::class, 'deleteperquizsheet'], $topic->id) }}">
+                                <form method="POST" action="{{ route('delete-all-questions', $topic->id) }}">
                                     @csrf
                                     @method('DELETE')
                                     <div class="modal-body text-center">
@@ -283,7 +282,8 @@
                                         <div class="alert alert-warning mt-3">
                                             <i class="fas fa-exclamation-triangle me-1"></i>
                                             <strong>Note:</strong> This will also delete all associated questions
-                                            ({{ $questionCount }} questions).
+                                            ({{ $questionCount }} questions)
+                                            .
                                         </div>
                                         <div class="alert alert-danger">
                                             <i class="fas fa-exclamation-circle me-1"></i>

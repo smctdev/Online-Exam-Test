@@ -314,7 +314,7 @@
             });
         </script>
 
-        {{-- <script>
+        <script>
             var count = 0;
             $(document).ready(function() {
                 var body = document.querySelector('body');
@@ -352,7 +352,7 @@
                 }
                 body.onblur = checkPageFocus;
             });
-        </script> --}}
+        </script>
     @else
         {{ '' }}
     @endif
