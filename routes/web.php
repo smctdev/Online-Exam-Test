@@ -52,19 +52,17 @@ Route::group(['middleware' => ['isadmin', 'prevent-back-history']], function () 
 Route::resource('/admin/dashboard', UsersController::class);
 Route::get('/admin/export', [AdminController::class, 'exportTemplate'])->name('export');
 
-Route::group(['middleware' => 'checkResult'], function () {
-
+Route::middleware(['checkResult', 'auth'])->group(function () {
     Route::get('online-assessment/welcome/instructions', [AdminController::class, 'startquiz'])->name('start_quiz');
     Route::get('online-assessment/category/{slug?}', [AdminController::class, 'apptitude'])->name('aptitude_exam');
     Route::get('online-assessment/category/{slug}/direction',  [AdminController::class, 'category'])->name('category_title');
     Route::get('/calculate', [PublicController::class, 'notify']);
     Route::get('/violation', [PublicController::class, 'violation']);
-});
-Route::get('online-assesment/completed', [PublicController::class, 'index'])->name('exam.completed');
-Route::get('online-assessment/verify-email/{id}', [AdminController::class, 'examinee'])->name('examinee');
-Route::group(['middleware' => 'checkResult'], function () {
     Route::resource('online-assessment/category/{id}/quiz', MainQuizController::class);
 });
+
+Route::get('online-assesment/completed', [PublicController::class, 'index'])->name('exam.completed');
+Route::get('online-assessment/verify-email/{id}', [AdminController::class, 'examinee'])->name('examinee');
 
 Route::view('/404/page-not-found', 'errors.404')->name('404');
 Route::view('/violate-rules', 'errors.403')->name('violation');
