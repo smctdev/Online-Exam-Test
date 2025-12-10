@@ -243,7 +243,7 @@
                     <h5 class="modal-title" id="createModalLabel">Add New Examinee</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" action="{{ route('store-examinee') }}">
+                <form method="POST" action="{{ route('store-admin') }}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -339,8 +339,7 @@
                                 undone.</p>
                         </div>
                         <div class="modal-footer">
-                            <form method="POST"
-                                action="{{ route('delete-examinees', $user->id) }}">
+                            <form method="POST" action="{{ route('delete-examinees', $user->id) }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
