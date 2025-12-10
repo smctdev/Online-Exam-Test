@@ -132,7 +132,7 @@
                                                                     <button type="button"
                                                                         class="dropdown-item text-success"
                                                                         data-bs-toggle="modal"
-                                                                        data-bs-target="#{{ $user->id }}chooseTopic">
+                                                                        data-bs-target="#chooseTopic-{{ $user->id }}">
                                                                         <i class="fas fa-envelope me-2"></i>
                                                                         Invite Exam
                                                                     </button>
@@ -151,7 +151,7 @@
                                                         <li>
                                                             <button type="button" class="dropdown-item text-info"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#{{ $user->id }}EditModal">
+                                                                data-bs-target="#editModal-{{ $user->id }}">
                                                                 <i class="fas fa-edit me-2"></i>
                                                                 Edit
                                                             </button>
@@ -160,7 +160,7 @@
                                                         <li>
                                                             <button type="button" class="dropdown-item text-danger"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#{{ $user->id }}deleteModal">
+                                                                data-bs-target="#deleteModal-{{ $user->id }}">
                                                                 <i class="fas fa-trash me-2"></i>
                                                                 Remove
                                                             </button>
@@ -170,7 +170,7 @@
                                                             <li>
                                                                 <button type="button" class="dropdown-item text-warning"
                                                                     data-bs-toggle="modal"
-                                                                    data-bs-target="#{{ $user->id }}retryModal">
+                                                                    data-bs-target="#retryModal-{{ $user->id }}">
                                                                     <i class="fas fa-history me-2"></i>
                                                                     Retry
                                                                 </button>
@@ -324,7 +324,7 @@
     @if ($users)
         @foreach ($users as $user)
             <!-- Delete Modal for {{ $user->id }} -->
-            <div class="modal fade" id="{{ $user->id }}deleteModal" tabindex="-1" aria-hidden="true">
+            <div class="modal fade" id="deleteModal-{{ $user->id }}" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header bg-danger">
@@ -354,7 +354,7 @@
             </div>
 
             <!-- Retry Modal for {{ $user->id }} -->
-            <div class="modal fade" id="{{ $user->id }}retryModal" tabindex="-1" aria-hidden="true">
+            <div class="modal fade" id="retryModal-{{ $user->id }}" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header bg-warning">
@@ -387,7 +387,7 @@
             </div>
 
             <!-- Choose Topic Modal for {{ $user->id }} -->
-            <div class="modal fade" id="{{ $user->id }}chooseTopic" tabindex="-1" aria-hidden="true">
+            <div class="modal fade" id="chooseTopic-{{ $user->id }}" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header bg-success">
@@ -428,7 +428,7 @@
             </div>
 
             <!-- Edit Modal for {{ $user->id }} -->
-            <div class="modal fade" id="{{ $user->id }}EditModal" tabindex="-1" aria-hidden="true">
+            <div class="modal fade" id="editModal-{{ $user->id }}" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header bg-info">
