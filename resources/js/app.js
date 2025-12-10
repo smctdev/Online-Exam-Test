@@ -1,6 +1,6 @@
 // Load jQuery FIRST
-import $ from "jquery";
-window.$ = window.jQuery = $;
+// import $ from "jquery";
+// window.$ = window.jQuery = $;
 // Bootstrap (if using v4 plugins)
 import "bootstrap";
 import "./bootstrap";

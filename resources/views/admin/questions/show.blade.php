@@ -313,17 +313,6 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Questions List ({{ $questions->count() }})</h3>
-                        <div class="card-tools">
-                            <div class="input-group input-group-sm" style="width: 200px;">
-                                <input type="text" name="table_search" class="form-control float-right"
-                                    placeholder="Search questions...">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-default">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="card-body table-responsive p-0">
                         <table id="questions_table" class="table table-hover text-nowrap">
@@ -363,8 +352,13 @@
                                                     @if (is_array($choices))
                                                         <ul class="list-unstyled mb-0">
                                                             @foreach ($choices as $index => $choice)
+                                                                @php
+                                                                    $choiceStr = trim($choice);
+                                                                    $answerStr = trim($question->answer);
+                                                                    $isCorrect = $choiceStr === $answerStr;
+                                                                @endphp
                                                                 <li>
-                                                                    <span class="badge bg-light text-dark">
+                                                                    <span class="badge {{ $isCorrect ? "bg-primary text-light" : "bg-light text-dark" }}">
                                                                         {{ chr(65 + $index) }}. {{ $choice }}
                                                                     </span>
                                                                 </li>
