@@ -12,7 +12,7 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon"
-        href="{{ asset('images/logo/' . ($setting ? $setting['favicon'] : "favicon.ico?v=2")) }}">
+        href="{{ asset('images/logo/' . ($setting ? $setting['favicon'] : 'favicon.ico?v=2')) }}">
 
     <!-- Bootstrap 5.3.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -81,7 +81,7 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     @stack('scripts')
 </body>
 
