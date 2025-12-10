@@ -941,24 +941,6 @@
                 }
             }).trigger('change');
 
-            // File upload preview
-            $('#question_img').on('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        $('#image-preview').remove();
-                        $('#question_img').after(
-                            '<div id="image-preview" class="mt-2">' +
-                            '<img src="' + e.target.result +
-                            '" class="img-thumbnail" style="max-height: 150px;">' +
-                            '</div>'
-                        );
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-
             // Confirm before delete
             $('form[action*="destroy"]').on('submit', function(e) {
                 e.preventDefault();
