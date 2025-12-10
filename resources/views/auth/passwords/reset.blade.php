@@ -27,12 +27,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('register') }}" title="Register">Register</a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link" href="{{ url('how-it-works') }}">How it works</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('about-us') }}">About us</a>
-                        </li>
+                        </li> --}}
                     @else
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"

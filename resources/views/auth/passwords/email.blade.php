@@ -40,7 +40,7 @@
                                 <i class="bi bi-person-plus me-1"></i>Register
                             </a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link" href="{{ url('how-it-works') }}">
                                 <i class="bi bi-info-circle me-1"></i>How it works
                             </a>
@@ -48,7 +48,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('about-us') }}">
                                 <i class="bi bi-building me-1"></i>About us
-                            </a>
+                            </a> --}}
                         </li>
                     @else
                         <li class="nav-item dropdown">

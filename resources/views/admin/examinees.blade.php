@@ -127,8 +127,8 @@
                                                         @else
                                                             <a title="Exam Result"
                                                                 href="{{ route('exam.result', ['id' => $user->id]) }}"
-                                                                class="btn btn-info btn-sm">
-                                                                <i class="fas fa-file-text"></i>
+                                                                class="btn btn-primary btn-sm">
+                                                                <i class="fas fa-file"></i>
                                                             </a>
                                                         @endif
                                                     @endif

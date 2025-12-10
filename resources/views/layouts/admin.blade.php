@@ -122,7 +122,7 @@
                 <ul class="navbar-nav ms-auto">
                     <!-- Notifications -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link position-relative" data-bs-toggle="dropdown" href="#" id="notify"
+                        <a class="nav-link position-relative mt-2" data-bs-toggle="dropdown" href="#" id="notify"
                             role="button" aria-expanded="false">
                             <i class="far fa-bell"></i>
                             @if (count($notify) > 0)
@@ -171,7 +171,7 @@
                                     @endforeach
                                 </div>
                             @else
-                                <div class="dropdown-header bg-primary text-white">
+                                <div class="dropdown-header bg-primary text-white text-start">
                                     <i class="fas fa-bell me-2"></i>
                                     Notifications
                                 </div>
@@ -235,9 +235,9 @@
                 <a href="{{ url('/') }}" class="brand-link">
                     @if ($setting)
                         <img src="{{ asset('images/logo/' . $setting->logo) }}" alt="SMCT Logo"
-                            class="brand-image img-circle elevation-3" style="opacity: .8">
+                            class="brand-image img-circle elevation-2" style="opacity: .8">
                     @endif
-                    <span class="brand-text font-weight-light">SMCT Admin</span>
+                    <span class="brand-text font-weight-light">SMCT Group of Companies</span>
                 </a>
 
                 <!-- Sidebar -->
@@ -246,7 +246,7 @@
                     @php
                         $color = App\Models\Color::where('user_id', $auth->id)->select('profile_color')->first();
                     @endphp
-                    <div class="user-panel mt-3 pb-3 mb-3 d-flex justify-content-center justify-items-center">
+                    <div class="user-panel mt-3 pb-3 mb-3 d-flex justify-items-center justify-content-center">
                         <div class="d-flex justify-content-center mb-2">
                             <div class="rounded-circle d-flex align-items-center justify-content-center"
                                 style="width: 40px; height: 40px; background-color: {{ $color ? $color->profile_color : '#ccc' }};">
