@@ -40,6 +40,7 @@ Route::group(['middleware' => ['isadmin', 'prevent-back-history']], function () 
     Route::post('/admin/uploadimg', [AdminController::class, 'uploadImages']);
     Route::post('/admin/questions/import_questions', [QuestionsController::class, 'importExcelToDB'])->name('import_questions');
     Route::post('/admin/send-invite/{token}/{name}/{email}/{id}', [EmailController::class, 'sendmail'])->name('send.invite');
+    Route::delete('delete/all/questions/{id}', [TopicController::class, 'deleteperquizsheet'])->name('delete-all-questions');
 });
 
 Route::resource('/admin/dashboard', UsersController::class);

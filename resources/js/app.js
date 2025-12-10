@@ -14,15 +14,15 @@ import "./bootstrap";
 // CSS imports
 // import "@fortawesome/fontawesome-free/css/all.min.css";
 // import "select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css";
-// import "fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css";
+// import "fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css";D
 
 // SweetAlert2, lodash, etc.
-// import Swal from "sweetalert2";
+import Swal from "sweetalert2";
 // import printJS from "print-js";
 // import _ from "lodash";
 
 // Globals
-// window.Swal = Swal;
+window.Swal = Swal;
 // window.printJS = printJS;
 // window._ = _;
 // window.Pusher = Pusher;
