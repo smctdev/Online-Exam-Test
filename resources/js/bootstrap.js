@@ -12,6 +12,7 @@ window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 // Import Bootstrap JavaScript (you might not need 'bootstrap-sass' if you are using Bootstrap 5)
 import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Use the full Bootstrap 5 bundle that includes Popper.js
 
+import "bootstrap";
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
