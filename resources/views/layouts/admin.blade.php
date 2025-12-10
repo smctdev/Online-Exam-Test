@@ -232,7 +232,7 @@
             <!-- Main Sidebar -->
             <aside class="main-sidebar sidebar-dark-primary elevation-4">
                 <!-- Brand Logo -->
-                <a href="{{ url('/') }}" class="brand-link">
+                <a href="{{ url('/') }}" class="brand-link" style="margin-left: -10px;">
                     @if ($setting)
                         <img src="{{ asset('images/logo/' . $setting->logo) }}" alt="SMCT Logo"
                             class="brand-image img-circle elevation-2" style="opacity: .8">
