@@ -96,6 +96,6 @@ class User extends Authenticatable
 
     public function is_admin()
     {
-        return $this->role === "S";
+        return $this->role === "S" || $this->role === "A";
     }
 }

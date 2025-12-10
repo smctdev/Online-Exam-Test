@@ -149,12 +149,12 @@
                                                 <div class="flex-shrink-0">
                                                     <div
                                                         class="avatar-circle-sm bg-primary text-white d-flex align-items-center justify-content-center">
-                                                        {{ substr($key->name, 0, 1) }}
+                                                        {{ substr($key?->name, 0, 1) }}
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <h6 class="mb-1 fw-bold">{{ $key->name }}</h6>
+                                                        <h6 class="mb-1 fw-bold">{{ $key?->name }}</h6>
                                                     </div>
                                                     <p class="mb-0 text-muted">
                                                         <i class="fas fa-check-circle text-success me-1"></i>
@@ -163,9 +163,9 @@
                                                 </div>
                                             </div>
                                             <small class="text-muted text-bold"
-                                                style="font-size: 10px; position: absolute; top: 2px; right: 10px;">{{ Illuminate\Support\Carbon::parse($key->result->created_at)->diffForHumans() }}</small>
+                                                style="font-size: 10px; position: absolute; top: 2px; right: 10px;">{{ Illuminate\Support\Carbon::parse($key?->result?->created_at)?->diffForHumans() }}</small>
                                         </a>
-                                        @if (!$loop->last)
+                                        @if (!$loop?->last)
                                             <hr class="my-0">
                                         @endif
                                     @endforeach
