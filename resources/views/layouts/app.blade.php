@@ -12,7 +12,7 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon"
-        href="{{ asset('images/logo/' . ($setting ? $setting['favicon'] : 'favicon.ico')) }}">
+        href="{{ asset('images/logo/' . ($setting ? $setting['favicon'] : "favicon.ico?v=2")) }}">
 
     <!-- Bootstrap 5.3.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"

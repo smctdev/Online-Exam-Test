@@ -53,9 +53,9 @@
                                     <th>Exam Sent On</th>
                                     <th>Exam Sent By</th>
                                     <th>Exam Status</th>
-                                    <th>Actions</th>
                                     <th>Added On</th>
                                     <th>Added By</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -110,49 +110,88 @@
                                                     <span class="badge bg-danger">Violated Rules</span>
                                                 @endif
                                             </td>
+                                            <td>{{ $user->created_at }}</td>
+                                            <td>{{ $user->added_by }}</td>
                                             <td>
                                                 <?php
                                                 $user_has_result = \DB::table('result')->where('user_id', $user->id)->first();
                                                 $user_has_essay = \DB::table('essay')->where('user_id', $user->id)->first();
                                                 ?>
-                                                <div class="btn-group">
-                                                    @if ($user->status !== 'violator' && $user->status !== 'retry')
-                                                        @if (empty($user_has_result) && empty($user_has_essay))
-                                                            <button type="button" class="btn btn-success btn-sm"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#{{ $user->id }}chooseTopic"
-                                                                title="Invite Exam">
-                                                                <i class="fas fa-envelope"></i>
-                                                            </button>
-                                                        @else
-                                                            <a title="Exam Result"
-                                                                href="{{ route('exam.result', ['id' => $user->id]) }}"
-                                                                class="btn btn-info btn-sm">
-                                                                <i class="fas fa-file-text"></i>
-                                                            </a>
+
+                                                <div class="dropdown">
+                                                    <button class="btn btn-outline-primary btn-sm"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                                        title="Actions">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                        @if ($user->status !== 'violator' && $user->status !== 'retry')
+                                                            @if (empty($user_has_result) && empty($user_has_essay))
+                                                                <li>
+                                                                    <button type="button"
+                                                                        class="dropdown-item text-success"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#{{ $user->id }}chooseTopic">
+                                                                        <i class="fas fa-envelope me-2"></i>
+                                                                        Invite Exam
+                                                                    </button>
+                                                                </li>
+                                                            @else
+                                                                <li>
+                                                                    <a class="dropdown-item text-primary"
+                                                                        href="{{ route('exam.result', ['id' => $user->id]) }}">
+                                                                        <i class="fas fa-file me-2"></i>
+                                                                        Exam Result
+                                                                    </a>
+                                                                </li>
+                                                            @endif
                                                         @endif
-                                                    @endif
-                                                    <button type="button" class="btn btn-info btn-sm"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#{{ $user->id }}EditModal" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger btn-sm"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#{{ $user->id }}deleteModal" title="Remove">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                    @if ($user->result || $user->status === 'violator')
-                                                        <button type="button" class="btn btn-warning btn-sm"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#{{ $user->id }}retryModal" title="Retry">
-                                                            <i class="fas fa-history"></i>
-                                                        </button>
-                                                    @endif
+
+                                                        <li>
+                                                            <button type="button" class="dropdown-item text-info"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#{{ $user->id }}EditModal">
+                                                                <i class="fas fa-edit me-2"></i>
+                                                                Edit
+                                                            </button>
+                                                        </li>
+
+                                                        <li>
+                                                            <button type="button" class="dropdown-item text-danger"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#{{ $user->id }}deleteModal">
+                                                                <i class="fas fa-trash me-2"></i>
+                                                                Remove
+                                                            </button>
+                                                        </li>
+
+                                                        @if ($user->result || $user->status === 'violator')
+                                                            <li>
+                                                                <button type="button" class="dropdown-item text-warning"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#{{ $user->id }}retryModal">
+                                                                    <i class="fas fa-history me-2"></i>
+                                                                    Retry
+                                                                </button>
+                                                            </li>
+                                                        @endif
+
+                                                        <!-- Optional: Add divider if needed -->
+                                                        {{-- @if ($user->status !== 'violator' && $user->status !== 'retry' && ($user->result || $user->status === 'violator'))
+                                                            <li>
+                                                                <hr class="dropdown-divider">
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item" href="#">
+                                                                    <i class="fas fa-eye me-2"></i>
+                                                                    View Profile
+                                                                </a>
+                                                            </li>
+                                                        @endif --}}
+                                                    </ul>
                                                 </div>
                                             </td>
-                                            <td>{{ $user->created_at }}</td>
-                                            <td>{{ $user->added_by }}</td>
                                         </tr>
                                     @endforeach
                                 @endif

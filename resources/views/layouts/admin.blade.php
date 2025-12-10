@@ -122,7 +122,7 @@
                 <ul class="navbar-nav ms-auto">
                     <!-- Notifications -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link position-relative" data-bs-toggle="dropdown" href="#" id="notify"
+                        <a class="nav-link position-relative mt-2" data-bs-toggle="dropdown" href="#" id="notify"
                             role="button" aria-expanded="false">
                             <i class="far fa-bell"></i>
                             @if (count($notify) > 0)
@@ -149,12 +149,12 @@
                                                 <div class="flex-shrink-0">
                                                     <div
                                                         class="avatar-circle-sm bg-primary text-white d-flex align-items-center justify-content-center">
-                                                        {{ substr($key->name, 0, 1) }}
+                                                        {{ substr($key?->name, 0, 1) }}
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <h6 class="mb-1 fw-bold">{{ $key->name }}</h6>
+                                                        <h6 class="mb-1 fw-bold">{{ $key?->name }}</h6>
                                                     </div>
                                                     <p class="mb-0 text-muted">
                                                         <i class="fas fa-check-circle text-success me-1"></i>
@@ -163,15 +163,15 @@
                                                 </div>
                                             </div>
                                             <small class="text-muted text-bold"
-                                                style="font-size: 10px; position: absolute; top: 2px; right: 10px;">{{ Illuminate\Support\Carbon::parse($key->result->created_at)->diffForHumans() }}</small>
+                                                style="font-size: 10px; position: absolute; top: 2px; right: 10px;">{{ Illuminate\Support\Carbon::parse($key?->result?->created_at)?->diffForHumans() }}</small>
                                         </a>
-                                        @if (!$loop->last)
+                                        @if (!$loop?->last)
                                             <hr class="my-0">
                                         @endif
                                     @endforeach
                                 </div>
                             @else
-                                <div class="dropdown-header bg-primary text-white">
+                                <div class="dropdown-header bg-primary text-white text-start">
                                     <i class="fas fa-bell me-2"></i>
                                     Notifications
                                 </div>
@@ -232,12 +232,12 @@
             <!-- Main Sidebar -->
             <aside class="main-sidebar sidebar-dark-primary elevation-4">
                 <!-- Brand Logo -->
-                <a href="{{ url('/') }}" class="brand-link">
+                <a href="{{ url('/') }}" class="brand-link" style="margin-left: -10px;">
                     @if ($setting)
                         <img src="{{ asset('images/logo/' . $setting->logo) }}" alt="SMCT Logo"
-                            class="brand-image img-circle elevation-3" style="opacity: .8">
+                            class="brand-image img-circle elevation-2" style="opacity: .8">
                     @endif
-                    <span class="brand-text font-weight-light">SMCT Admin</span>
+                    <span class="brand-text font-weight-light">SMCT Group of Companies</span>
                 </a>
 
                 <!-- Sidebar -->
@@ -246,7 +246,7 @@
                     @php
                         $color = App\Models\Color::where('user_id', $auth->id)->select('profile_color')->first();
                     @endphp
-                    <div class="user-panel mt-3 pb-3 mb-3 d-flex justify-content-center justify-items-center">
+                    <div class="user-panel mt-3 pb-3 mb-3 d-flex justify-items-center justify-content-center">
                         <div class="d-flex justify-content-center mb-2">
                             <div class="rounded-circle d-flex align-items-center justify-content-center"
                                 style="width: 40px; height: 40px; background-color: {{ $color ? $color->profile_color : '#ccc' }};">
