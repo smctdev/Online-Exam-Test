@@ -47,7 +47,7 @@
                     </div>
                     <div class="card-body">
                         <form method="POST"
-                            action="{{ action([App\Http\Controllers\SettingController::class, 'update'], $setting->id ?? 1) }}"
+                            action="{{ route('update-settings', $setting->id ?? 1) }}"
                             enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')

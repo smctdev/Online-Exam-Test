@@ -47,7 +47,7 @@
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
-                    <form method="POST" action="{{ action([App\Http\Controllers\TopicController::class, 'store']) }}">
+                    <form method="POST" action="{{ route('store-topic') }}">
                         @csrf
                         <div class="modal-body">
                             <div class="row">
@@ -268,8 +268,7 @@
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form method="POST"
-                                    action="{{ action([App\Http\Controllers\TopicController::class, 'deleteTopic'], $topic->id) }}">
+                                <form method="POST" action="{{ route('delete-topic', $topic->id) }}">
                                     @csrf
                                     @method('DELETE')
                                     <div class="modal-body text-center">
@@ -313,8 +312,7 @@
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <form method="POST"
-                                    action="{{ action([App\Http\Controllers\TopicController::class, 'update'], $topic->id) }}">
+                                <form method="POST" action="{{ route('update-topic', $topic->id) }}">
                                     @csrf
                                     @method('PATCH')
                                     <div class="modal-body">
