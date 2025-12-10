@@ -119,9 +119,8 @@
                                                 ?>
 
                                                 <div class="dropdown">
-                                                    <button class="btn btn-outline-primary btn-sm"
-                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                                        title="Actions">
+                                                    <button class="btn btn-outline-primary btn-sm" type="button"
+                                                        data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
 
@@ -226,8 +225,7 @@
                     <p>Do you really want to delete <strong>ALL examinees</strong>? This process cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
-                    <form method="POST"
-                        action="{{ action([App\Http\Controllers\DestroyAllController::class, 'AllUsersDestroy']) }}">
+                    <form method="POST" action="{{ route('destroy-all-examinees') }}">
                         @csrf
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-danger">Delete All</button>
@@ -245,7 +243,7 @@
                     <h5 class="modal-title" id="createModalLabel">Add New Examinee</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" action="{{ action([App\Http\Controllers\UsersController::class, 'store']) }}">
+                <form method="POST" action="{{ route('store-examinee']) }}">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -342,7 +340,7 @@
                         </div>
                         <div class="modal-footer">
                             <form method="POST"
-                                action="{{ action([App\Http\Controllers\UsersController::class, 'destroy'], $user->id) }}">
+                                action="{{ route('delete-examinees', $user->id) }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

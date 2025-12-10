@@ -41,6 +41,12 @@ Route::group(['middleware' => ['isadmin', 'prevent-back-history']], function () 
     Route::post('/admin/questions/import_questions', [QuestionsController::class, 'importExcelToDB'])->name('import_questions');
     Route::post('/admin/send-invite/{token}/{name}/{email}/{id}', [EmailController::class, 'sendmail'])->name('send.invite');
     Route::delete('delete/all/questions/{id}', [TopicController::class, 'deleteperquizsheet'])->name('delete-all-questions');
+    Route::delete('delete/topic/{id}', [TopicController::class, 'deleteTopic'])->name('delete-topic');
+    Route::patch('update/topic/{id}', [TopicController::class, 'update'])->name('update-topic');
+    Route::post('create-topic', [TopicController::class, 'store'])->name('store-topic');
+    Route::post('create-admin', [UsersController::class, 'store'])->name('store-admin');
+    Route::delete('delete-examinees/{id}', [UsersController::class, 'destroy'])->name('delete-examinees');
+    Route::delete('delete-all', [DestroyAllController::class, 'AllUsersDestroy'])->name('destroy-all-examinees');
 });
 
 Route::resource('/admin/dashboard', UsersController::class);
@@ -84,3 +90,4 @@ Route::get('/logout', function () {
 })->middleware('auth')->name('logout');
 
 Route::post('/violation/count', [PublicController::class, 'violationCount'])->name('violation.count');
+Route::patch('update-settings/{id}', [SettingController::class, 'update'])->name('update-settings');

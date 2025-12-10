@@ -168,7 +168,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <form method="POST" action="{{ action([App\Http\Controllers\UsersController::class, 'store']) }}">
+                <form method="POST" action="{{ route('store-admin') }}">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" name="role" value="S">
