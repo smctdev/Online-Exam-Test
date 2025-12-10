@@ -9,6 +9,7 @@ use App\Models\Question;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class QuestionsController extends Controller
@@ -110,7 +111,7 @@ class QuestionsController extends Controller
         if ($file = $request->file('question_img')) {
 
             $name = time() . '-' . $file->getClientOriginalName();
-            $file->move('storage/question_img/', $name);
+            $file->storeAs('question_img', $name, 'public');
             $input['question_img'] = $name;
         }
 
@@ -180,14 +181,21 @@ class QuestionsController extends Controller
             $name = time() . '-' . $file->getClientOriginalName();
 
             if ($question->question_img != null) {
-                unlink(public_path() . '/assessment/storage/question_img/' . $question->question_img);
+                Storage::disk('public')->delete("question_img/{$question->question_img}");
             }
 
-            $file->move('storage/question_img/', $name);
+            $file->storeAs('question_img', $name, 'public');
+
             $input['question_img'] = $name;
         }
 
+        if ($request->remove_image) {
+            $input['question_img'] = null;
+            Storage::disk('public')->delete("question_img/{$question->question_img}");
+        }
+
         $question->update($input);
+
         return back()->with('updated', 'Question has been updated');
     }
 
