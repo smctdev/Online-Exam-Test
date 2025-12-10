@@ -11,419 +11,545 @@
 @section('content')
     @include('message')
 
-    <br><br>
-    <div>
-        <a data-toggle="modal" data-target="#createModal" href="javascript:void(0)" class="slim-menu">
-            <span>
-                <i class="fa fa-user-plus fa-lg"></i> Add Examinee
-            </span>
-        </a>
-    </div>
-    <br><br><br><br>
-
-    @if ($auth->role == 'S')
-        <h4>List of Examinees</h4>
-
-        <!-- All Delete Modal -->
-        <div id="AllDeleteModal" class="delete-modal modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <div class="delete-icon"></div>
+    <div class="container-fluid">
+        <!-- Page header with button -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Examinees Management</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#createModal">
+                                <i class="fas fa-user-plus"></i> Add Examinee
+                            </button>
+                        </div>
                     </div>
-                    <div class="modal-body text-center">
-                        <h4 class="modal-heading">Are You Sure ?</h4>
-                        <p>Do you really want to delete "All these records"? This process cannot be undone.</p>
+                </div>
+            </div>
+        </div>
+
+        @if ($auth->role == 'S')
+            <!-- Examinees Table Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">List of Examinees</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#AllDeleteModal">
+                            <i class="fas fa-trash"></i> Delete All
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="example1" class="table table-bordered table-striped table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Position Applied</th>
+                                    <th>Exam Started</th>
+                                    <th>Exam End</th>
+                                    <th>Exam Sent On</th>
+                                    <th>Exam Sent By</th>
+                                    <th>Exam Status</th>
+                                    <th>Actions</th>
+                                    <th>Added On</th>
+                                    <th>Added By</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if ($users)
+                                    @foreach ($users as $key => $user)
+                                        <?php
+                                        $exam = \DB::table('exam')->where('user_id', $user->id)->first();
+                                        ?>
+                                        <tr>
+                                            <td><strong>{{ strtoupper($user->name) }}</strong></td>
+                                            <td>{{ $user->applied_position }}</td>
+                                            <td>
+                                                @if (!empty($exam))
+                                                    <span class="badge bg-info">{{ $exam->started_at }}</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Not Started</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (!empty($exam))
+                                                    <span class="badge bg-info">{{ $exam->end_at }}</span>
+                                                @else
+                                                    <span class="badge bg-secondary">N/A</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (!empty($exam))
+                                                    <span class="badge bg-info">{{ $exam->created_at }}</span>
+                                                @else
+                                                    <span class="badge bg-secondary">N/A</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (!empty($exam))
+                                                    {{ $exam->sent_by }}
+                                                @else
+                                                    <span class="badge bg-secondary">N/A</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if (empty($user->status))
+                                                    <span class="badge bg-warning">Link not sent</span>
+                                                @elseif ($user->status == 'sent')
+                                                    <span class="badge bg-primary">Pending</span>
+                                                @elseif ($user->status == 'retry')
+                                                    <span class="badge bg-info">Retrying</span>
+                                                @elseif ($user->status == 'progress')
+                                                    <span class="badge bg-secondary">In Progress</span>
+                                                @elseif ($user->status == 'finish')
+                                                    <span class="badge bg-success">Completed</span>
+                                                @else
+                                                    <span class="badge bg-danger">Violated Rules</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $user_has_result = \DB::table('result')->where('user_id', $user->id)->first();
+                                                $user_has_essay = \DB::table('essay')->where('user_id', $user->id)->first();
+                                                ?>
+                                                <div class="btn-group">
+                                                    @if ($user->status !== 'violator' && $user->status !== 'retry')
+                                                        @if (empty($user_has_result) && empty($user_has_essay))
+                                                            <button type="button" class="btn btn-success btn-sm"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#{{ $user->id }}chooseTopic"
+                                                                title="Invite Exam">
+                                                                <i class="fas fa-envelope"></i>
+                                                            </button>
+                                                        @else
+                                                            <a title="Exam Result"
+                                                                href="{{ route('exam.result', ['id' => $user->id]) }}"
+                                                                class="btn btn-info btn-sm">
+                                                                <i class="fas fa-file-text"></i>
+                                                            </a>
+                                                        @endif
+                                                    @endif
+                                                    <button type="button" class="btn btn-info btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#{{ $user->id }}EditModal" title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#{{ $user->id }}deleteModal" title="Remove">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                    @if ($user->result || $user->status === 'violator')
+                                                        <button type="button" class="btn btn-warning btn-sm"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#{{ $user->id }}retryModal" title="Retry">
+                                                            <i class="fas fa-history"></i>
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td>{{ $user->created_at }}</td>
+                                            <td>{{ $user->added_by }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    <div class="float-right">
+                        {{ $users->links() }}
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        @endif
+    </div>
+
+    <!-- All Delete Modal -->
+    <div class="modal fade" id="AllDeleteModal" tabindex="-1" aria-labelledby="AllDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title" id="AllDeleteModalLabel">Confirm Delete All</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
+                    </div>
+                    <h4>Are You Sure?</h4>
+                    <p>Do you really want to delete <strong>ALL examinees</strong>? This process cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="POST"
+                        action="{{ action([App\Http\Controllers\DestroyAllController::class, 'AllUsersDestroy']) }}">
+                        @csrf
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete All</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title" id="createModalLabel">Add New Examinee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ action([App\Http\Controllers\UsersController::class, 'store']) }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" name="role" value="E">
+                                <input type="hidden" name="auth" value="{{ $auth->name }}">
+
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Examinee Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="name" value="{{ old('name') }}"
+                                        class="form-control @error('name') is-invalid @enderror" placeholder="Enter Name"
+                                        required>
+                                    @error('name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address <span
+                                            class="text-danger">*</span></label>
+                                    <input type="email" name="email" value="{{ old('email') }}"
+                                        class="form-control @error('email') is-invalid @enderror"
+                                        placeholder="eg: info@example.com" required>
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="mobile" class="form-label">Mobile No. <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="mobile" value="{{ old('mobile') }}"
+                                        class="form-control @error('mobile') is-invalid @enderror"
+                                        placeholder="+639xxxxxxxxx" required>
+                                    @error('mobile')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="applied_position" class="form-label">Position Applied <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" name="applied_position" value="{{ old('applied_position') }}"
+                                        class="form-control @error('applied_position') is-invalid @enderror"
+                                        placeholder="Position Applied" required>
+                                    @error('applied_position')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Address</label>
+                                    <textarea name="address" class="form-control @error('address') is-invalid @enderror" rows="3"
+                                        placeholder="Enter Address">{{ old('address') }}</textarea>
+                                    @error('address')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="reset" class="btn btn-warning">Reset</button>
+                        <button type="submit" class="btn btn-primary">Add Examinee</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals for each user (placed at the end for better organization) -->
+    @if ($users)
+        @foreach ($users as $user)
+            <!-- Delete Modal for {{ $user->id }} -->
+            <div class="modal fade" id="{{ $user->id }}deleteModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger">
+                            <h5 class="modal-title">Delete Examinee</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-trash fa-3x text-danger"></i>
+                            </div>
+                            <h4>Are You Sure?</h4>
+                            <p>Do you really want to delete <strong>{{ $user->name }}</strong>? This process cannot be
+                                undone.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <form method="POST"
+                                action="{{ action([App\Http\Controllers\UsersController::class, 'destroy'], $user->id) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Retry Modal for {{ $user->id }} -->
+            <div class="modal fade" id="{{ $user->id }}retryModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <h5 class="modal-title">Retry Exam</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-redo fa-3x text-warning"></i>
+                            </div>
+                            <h4>Are You Sure?</h4>
+                            <p>Do you really want to make <strong>{{ $user->name }}</strong> retry the exam?</p>
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <strong>Warning:</strong> Past exams and records of this examinee will be deleted/cleared.
+                            </div>
+                            <p class="text-muted">This process cannot be undone.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <form method="POST" action="{{ route('retry.exam', $user->id) }}">
+                                @csrf
+                                @method('POST')
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-warning">Retry Exam</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Choose Topic Modal for {{ $user->id }} -->
+            <div class="modal fade" id="{{ $user->id }}chooseTopic" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success">
+                            <h5 class="modal-title">Select Examination Topics</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
                         <form method="POST"
-                            action="{{ action([App\Http\Controllers\DestroyAllController::class, 'AllUsersDestroy']) }}">
+                            action="{{ route('send.invite', [$user->token, $user->name, $user->email, $user->id]) }}">
                             @csrf
-                            <div class="btn-group">
-                                <button type="reset" class="btn btn-gray" data-dismiss="modal">No</button>
-                                <button type="submit" class="btn btn-danger">Yes</button>
+                            <div class="modal-body">
+                                <p>Select topics for <strong>{{ $user->name }}</strong>:</p>
+                                <input type="hidden" name="auth" value="{{ $auth->name }}">
+                                <div class="mb-3">
+                                    @foreach ($topics as $subject)
+                                        <div class="form-check mb-2">
+                                            <input type="checkbox" name="sub{{ $subject->id }}"
+                                                value="{{ $subject->id }}" class="form-check-input exambox"
+                                                id="sub{{ $subject->id }}_{{ $user->id }}">
+                                            <label class="form-check-label"
+                                                for="sub{{ $subject->id }}_{{ $user->id }}">
+                                                {{ $subject->title }}
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-success" id="sendinvite{{ $user->id }}"
+                                    disabled>
+                                    <i class="fas fa-paper-plane"></i> Send Invite
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Create Modal -->
-        <div id="createModal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add Examinee</h4>
+            <!-- Edit Modal for {{ $user->id }} -->
+            <div class="modal fade" id="{{ $user->id }}EditModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info">
+                            <h5 class="modal-title">Edit Examinee Information</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <form method="POST" action="{{ route('dashboard.update', $user->id) }}">
+                            @csrf
+                            @method('PATCH')
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="hidden" name="id" value="{{ $user->id }}">
+
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Name <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="name" value="{{ old('name', $user->name) }}"
+                                                class="form-control @error('name') is-invalid @enderror" required
+                                                placeholder="Enter Name">
+                                            @error('name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email Address <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="email" name="email"
+                                                value="{{ old('email', $user->email) }}"
+                                                class="form-control @error('email') is-invalid @enderror" required
+                                                placeholder="eg: info@example.com">
+                                            @error('email')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="mobile" class="form-label">Mobile No.</label>
+                                            <input type="text" name="mobile"
+                                                value="{{ old('mobile', $user->mobile) }}"
+                                                class="form-control @error('mobile') is-invalid @enderror"
+                                                placeholder="+639xxxxxxxxx">
+                                            @error('mobile')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="applied_position" class="form-label">Position Applied <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="applied_position"
+                                                value="{{ old('applied_position', $user->applied_position) }}"
+                                                class="form-control @error('applied_position') is-invalid @enderror"
+                                                required placeholder="Position Applied">
+                                            @error('applied_position')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="address" class="form-label">Address</label>
+                                            <textarea name="address" class="form-control @error('address') is-invalid @enderror" rows="3"
+                                                placeholder="Enter Address">{{ old('address', $user->address) }}</textarea>
+                                            @error('address')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-info">Update Information</button>
+                            </div>
+                        </form>
                     </div>
-                    <form method="POST" action="{{ action([App\Http\Controllers\UsersController::class, 'store']) }}">
-                        @csrf
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                                        <label for="name">Examinee Name <span class="required">*</span></label>
-                                        <input type="text" name="name" value="{{ old('name') }}"
-                                            class="form-control" required placeholder="Enter Name">
-                                        <small class="text-danger">{{ $errors->first('name') }}</small>
-                                    </div>
-
-                                    <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                                        <label for="email">Email address <span class="required">*</span></label>
-                                        <input type="email" name="email" value="{{ old('email') }}"
-                                            class="form-control" placeholder="eg: info@example.com" required>
-                                        <small class="text-danger">{{ $errors->first('email') }}</small>
-                                    </div>
-
-                                    <div class="form-group{{ $errors->has('mobile') ? ' has-error' : '' }}">
-                                        <label for="mobile">Mobile No. <span class="required">*</span></label>
-                                        <input type="text" name="mobile" value="{{ old('mobile') }}"
-                                            class="form-control" placeholder="+639xxxxxxxxx" required>
-                                        <small class="text-danger">{{ $errors->first('mobile') }}</small>
-                                    </div>
-
-                                    <input type="hidden" name="role" value="E">
-                                    <input type="hidden" name="auth" value="{{ $auth->name }}">
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group{{ $errors->has('applied_position') ? ' has-error' : '' }}">
-                                        <label for="applied_position">Position Applied <span
-                                                class="required">*</span></label>
-                                        <input type="text" name="applied_position" value="{{ old('applied_position') }}"
-                                            class="form-control" required placeholder="Position Applied">
-                                        <small class="text-danger">{{ $errors->first('applied_position') }}</small>
-                                    </div>
-
-                                    <div class="form-group{{ $errors->has('address') ? ' has-error' : '' }}">
-                                        <label for="address">Address</label>
-                                        <textarea name="address" class="form-control" rows="5" placeholder="Enter Your address">{{ old('address') }}</textarea>
-                                        <small class="text-danger">{{ $errors->first('address') }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <div class="btn-group pull-right">
-                                <button type="reset" class="btn btn-default">Reset</button>
-                                <button type="submit" class="btn btn-wave">Add</button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
 
-        <!-- Examinees Table -->
-        <div class="content-block box">
-            <div class="box-body table-responsive">
-                <table id="example1" class="table table-bordered text-center">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Position Applied</th>
-                            <th>Exam Started</th>
-                            <th>Exam End</th>
-                            <th>Exam Sent On</th>
-                            <th>Exam Sent By</th>
-                            <th>Exam Status</th>
-                            <th>Actions</th>
-                            <th>Added On</th>
-                            <th>Added By</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($users)
-                            @foreach ($users as $key => $user)
-                                <?php
-                                $exam = \DB::table('exam')->where('user_id', $user->id)->first();
-                                ?>
-                                <tr>
-                                    <td>{{ strtoupper($user->name) }}</td>
-                                    <td>{{ $user->applied_position }}</td>
-                                    <td>
-                                        @if (!empty($exam))
-                                            {{ $exam->started_at }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if (!empty($exam))
-                                            {{ $exam->end_at }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if (!empty($exam))
-                                            {{ $exam->created_at }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if (!empty($exam))
-                                            {{ $exam->sent_by }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if (empty($user->status))
-                                            <span class="label label-warning">Link not send</span>
-                                        @elseif ($user->status == 'sent')
-                                            <span class="label label-primary">Pending</span>
-                                        @elseif ($user->status == 'retry')
-                                            <span class="label label-info">Retrying</span>
-                                        @elseif ($user->status == 'progress')
-                                            <span class="label label-default">In Progress</span>
-                                        @elseif ($user->status == 'finish')
-                                            <span class="label label-success">Completed</span>
-                                        @else
-                                            <span class="label label-danger">Violated Rules</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <?php
-                                        $user_has_result = \DB::table('result')->where('user_id', $user->id)->first();
-                                        $user_has_essay = \DB::table('essay')->where('user_id', $user->id)->first();
-                                        ?>
-                                        <div style="display:flex;justify-content:center">
-                                            @if ($user->status !== 'violator' && $user->status !== 'retry')
-                                                @if (empty($user_has_result) && empty($user_has_essay))
-                                                    <a type="button" class="btn btn-xs btn-success" data-toggle="modal"
-                                                        data-target="#{{ $user->id }}chooseTopic"
-                                                        title="Invite Exam">
-                                                        <i class="fa fa-envelope"></i>
-                                                    </a>
-                                                @else
-                                                    <a title="Exam Result"
-                                                        href="javascript:ajaxCall('{{ route('exam.result', ['id' => $user->id]) }}','exam-result')"
-                                                        class="btn btn-info btn-xs">
-                                                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                                                    </a>
-                                                @endif
-                                            @endif
-                                            <a type="button" class="btn btn-info btn-xs" data-toggle="modal"
-                                                data-target="#{{ $user->id }}EditModal" title="Edit"
-                                                style="margin-left:10px">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-                                            <a type="button" class="btn btn-xs btn-danger" data-toggle="modal"
-                                                data-target="#{{ $user->id }}deleteModal" title="Remove"
-                                                style="margin-left:10px">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                            @if ($user->result || $user->status === 'violator')
-                                                <a type="button" class="btn btn-xs btn-warning" data-toggle="modal"
-                                                    data-target="#{{ $user->id }}retryModal" title="Retry"
-                                                    style="margin-left:10px">
-                                                    <i class="fa fa-history"></i>
-                                                </a>
-                                            @endif
-                                        </div>
 
-                                        <!-- Delete Modal -->
-                                        <div id="{{ $user->id }}deleteModal" class="delete1-modal modal fade"
-                                            role="dialog">
-                                            <div class="modal-dialog modal-sm">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close"
-                                                            data-dismiss="modal">&times;</button>
-                                                        <div class="delete-icon"></div>
-                                                    </div>
-                                                    <div class="modal-body text-center">
-                                                        <h4 class="modal-heading">Are You Sure ?</h4>
-                                                        <p>Do you really want to delete these records? This process cannot
-                                                            be undone.</p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <form method="POST"
-                                                            action="{{ action([App\Http\Controllers\UsersController::class, 'destroy'], $user->id) }}">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <div class="btn-group">
-                                                                <button type="reset" class="btn btn-gray"
-                                                                    data-dismiss="modal">No</button>
-                                                                <button type="submit" class="btn btn-danger">Yes</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const userId = "{{ $user->id }}";
+                    const button = document.getElementById(`sendinvite${userId}`);
+                    const checkboxes = document.querySelectorAll(`.exambox[id^="sub"][id$="_${userId}"]`);
 
-                                        <!-- Retry Modal -->
-                                        <div id="{{ $user->id }}retryModal" class="retry-modal modal fade"
-                                            role="dialog">
-                                            <div class="modal-dialog modal-sm">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close"
-                                                            data-dismiss="modal">&times;</button>
-                                                        <div class="retry-icon"></div>
-                                                    </div>
-                                                    <div class="modal-body text-center">
-                                                        <h4 class="modal-heading">Are You Sure ?</h4>
-                                                        <p>Do you really want to make this examinee to retry?
-                                                            <br />
-                                                            <span class="text-danger"><strong>"Past exams and records of
-                                                                    this examinee will be deleted/cleared"</strong></span>
-                                                            <br />This process cannot be undone.
-                                                        </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <form method="POST"
-                                                            action="{{ route('retry.exam', $user->id) }}">
-                                                            @csrf
-                                                            @method('POST')
-                                                            <div class="btn-group">
-                                                                <button type="reset" class="btn btn-gray"
-                                                                    data-dismiss="modal">No</button>
-                                                                <button type="submit" class="btn btn-danger">Yes</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>{{ $user->created_at }}</td>
-                                    <td>{{ $user->added_by }}</td>
-                                </tr>
+                    function toggleButton() {
+                        button.disabled = !Array.from(checkboxes).some(cb => cb.checked);
+                    }
 
-                                <!-- Choose Topic Modal -->
-                                <div id="{{ $user->id }}chooseTopic" class="delete-modal modal fade examination"
-                                    role="dialog">
-                                    <div class="modal-dialog modal-sm">
-                                        <div class="modal-content">
-                                            <div class="modal-header text-center">
-                                                <h3>Examination</h3>
-                                            </div>
-                                            <form method="POST"
-                                                action="{{ route('send.invite', [$user->token, $user->name, $user->email, $user->id]) }}">
-                                                @csrf
-                                                <div class="modal-body">
-                                                    @foreach ($topics as $subject)
-                                                        <div class="form-check">
-                                                            <input type="checkbox" name="sub{{ $subject->id }}"
-                                                                value="{{ $subject->id }}" class="exambox"
-                                                                id="sub{{ $subject->id }}">
-                                                            <label
-                                                                for="sub{{ $subject->id }}">{{ $subject->title }}</label>
-                                                        </div>
-                                                    @endforeach
-                                                    <input type="hidden" name="auth" value="{{ $auth->name }}">
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-danger" id="sendinvite">Send
-                                                        Invite</button>
-                                                    <button type="reset" class="btn btn-gray"
-                                                        data-dismiss="modal">Cancel</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Edit Modal -->
-                                <div id="{{ $user->id }}EditModal" class="modal fade" role="dialog">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close"
-                                                    data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title" style="color: #000">Edit Information</h4>
-                                            </div>
-                                            <form method="POST" action="{{ route('dashboard.update', $user->id) }}">
-                                                @csrf
-                                                @method('PATCH')
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <input type="hidden" name="id"
-                                                                value="{{ $user->id }}">
-
-                                                            <div
-                                                                class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                                                                <label for="name">Name <span
-                                                                        class="required">*</span></label>
-                                                                <input type="text" name="name"
-                                                                    value="{{ old('name', $user->name) }}"
-                                                                    class="form-control" required
-                                                                    placeholder="Enter your name">
-                                                                <small
-                                                                    class="text-danger">{{ $errors->first('name') }}</small>
-                                                            </div>
-
-                                                            <div
-                                                                class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                                                                <label for="email">Email address <span
-                                                                        class="required">*</span></label>
-                                                                <input type="email" name="email"
-                                                                    value="{{ old('email', $user->email) }}"
-                                                                    class="form-control" required
-                                                                    placeholder="eg: info@example.com">
-                                                                <small
-                                                                    class="text-danger">{{ $errors->first('email') }}</small>
-                                                            </div>
-
-                                                            <div
-                                                                class="form-group{{ $errors->has('mobile') ? ' has-error' : '' }}">
-                                                                <label for="mobile">Mobile No.</label>
-                                                                <input type="text" name="mobile"
-                                                                    value="{{ old('mobile', $user->mobile) }}"
-                                                                    class="form-control" placeholder="eg: 09190000000">
-                                                                <small
-                                                                    class="text-danger">{{ $errors->first('mobile') }}</small>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div
-                                                                class="form-group{{ $errors->has('applied_position') ? ' has-error' : '' }}">
-                                                                <label for="applied_position">Position Applied <span
-                                                                        class="required">*</span></label>
-                                                                <input type="text" name="applied_position"
-                                                                    value="{{ old('applied_position', $user->applied_position) }}"
-                                                                    class="form-control" required
-                                                                    placeholder="Position Applied">
-                                                                <small
-                                                                    class="text-danger">{{ $errors->first('applied_position') }}</small>
-                                                            </div>
-
-                                                            <div
-                                                                class="form-group{{ $errors->has('address') ? ' has-error' : '' }}">
-                                                                <label for="address">Address</label>
-                                                                <textarea name="address" class="form-control" rows="5" placeholder="Enter Your Address">{{ old('address', $user->address) }}</textarea>
-                                                                <small
-                                                                    class="text-danger">{{ $errors->first('address') }}</small>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <div class="btn-group pull-right">
-                                                        <button type="submit" class="btn btn-wave">Update</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                    checkboxes.forEach(cb => cb.addEventListener('change', toggleButton));
+                });
+            </script>
+        @endforeach
     @endif
 
     <script>
         $(function() {
-            var boxes = $('.exambox');
-            boxes.on('change', function() {
-                $('#sendinvite').prop('disabled', !boxes.filter(':checked').length);
-            }).trigger('change');
+            // Initialize DataTable
+            $('#example1').DataTable({
+                "responsive": true,
+                "lengthChange": true,
+                "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "order": [
+                    [0, 'asc']
+                ],
+                "pageLength": 10,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='fas fa-chevron-left'></i>",
+                        "next": "<i class='fas fa-chevron-right'></i>"
+                    }
+                }
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
-            $('#example1').DataTable();
+            // Tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
         });
     </script>
 @endsection
+
+@push('styles')
+    <style>
+        .badge {
+            font-size: 0.85em;
+            padding: 0.35em 0.65em;
+        }
+
+        .btn-group .btn {
+            margin-right: 2px;
+        }
+
+        .btn-group .btn:last-child {
+            margin-right: 0;
+        }
+
+        .modal-header {
+            color: white;
+        }
+
+        .table th {
+            font-weight: 600;
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+        }
+
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+    </style>
+@endpush

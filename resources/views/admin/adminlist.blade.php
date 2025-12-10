@@ -11,216 +11,364 @@
 @section('content')
     @include('message')
 
-    <h3>Administrator Panel</h3>
-    <div class="dash-menu">
-        <a data-toggle="modal" data-target="#createAdmin" href="javascript:void(0)" class="btn btn-xs"
-            style="background-color: #354A5D">
-            <i class="fa fa-shield"></i> Create Admin Account
-        </a>
-    </div>
-    <br><br><br><br>
-    @if ($auth->role == 'S')
-        {{-- Create Modal --}}
-        <div id="createAdmin" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-md">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add Administrator</h4>
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Administrator Panel</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#createAdmin">
+                                <i class="fas fa-user-shield"></i> Create Admin Account
+                            </button>
+                        </div>
                     </div>
-                    <form method="POST" action="{{ action([App\Http\Controllers\UsersController::class, 'store']) }}">
-                        @csrf
-                        <div class="modal-body">
-                            <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                                <label for="name">Administrator Name <span class="required">*</span></label>
-                                <input type="text" name="name" value="{{ old('name') }}" class="form-control"
-                                    required placeholder="Enter Name">
-                                <small class="text-danger">{{ $errors->first('name') }}</small>
-                            </div>
+                </div>
+            </div>
+        </div>
 
-                            <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                                <label for="email">Email address <span class="required">*</span></label>
-                                <input type="email" name="email" value="{{ old('email') }}" class="form-control"
-                                    placeholder="eg: info@example.com" required>
-                                <small class="text-danger">{{ $errors->first('email') }}</small>
+        @if ($auth->role == 'S')
+            <div class="row">
+                <!-- Current Admin Profile Card -->
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Current Administrator Profile</h3>
+                            <div class="card-tools">
+                                <button type="button" id="edit" class="btn btn-info btn-sm" title="Edit Profile">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                             </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 text-center mb-4 mb-md-0">
+                                    @php
+                                        $color = App\Models\Color::where('user_id', $auth->id)
+                                            ->select('profile_color')
+                                            ->first();
+                                        $userInfo = $userInfo[0] ?? null;
+                                        $profileColor = $color?->profile_color ?? '#007bff';
+                                    @endphp
+                                    <div class="profile-circle-admin mx-auto"
+                                        style="background-color: {{ $profileColor }}; width: 120px; height: 120px;">
+                                        <span id="admin-name-profile" class="display-4 text-white">
+                                            {{ substr($userInfo->name ?? 'A', 0, 1) }}
+                                        </span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">Click a row in the admin list to view details</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <form id="adminForm">
+                                        <input type="hidden" id="id" value="{{ $userInfo->id ?? '' }}">
+                                        <div class="mb-3">
+                                            <label for="dname" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="dname"
+                                                value="{{ $userInfo->name ?? '' }}" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="demail" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="demail"
+                                                value="{{ $userInfo->email ?? '' }}" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="drole" class="form-label">Role</label>
+                                            <input type="text" class="form-control" id="drole"
+                                                value="{{ isset($userInfo->role) ? ($userInfo->role == 'S' ? 'SuperAdmin' : 'Administrator') : '' }}"
+                                                disabled>
+                                        </div>
 
-                            <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                                <label for="password">Password <span class="required">*</span></label>
-                                <input type="password" name="password" class="form-control"
-                                    placeholder="Enter Your Password" required>
-                                <small class="text-danger">{{ $errors->first('password') }}</small>
+                                        <div id="btn-box" class="d-flex gap-2 mt-4" style="display: none !important;">
+                                            <button type="button" class="btn btn-secondary" id="cancel">Cancel</button>
+                                            <button type="button" id="cpassbtn" data-id="{{ $userInfo->id ?? '' }}"
+                                                data-bs-toggle="modal" data-bs-target="#changepass" class="btn btn-warning">
+                                                <i class="fas fa-key"></i> Change Password
+                                            </button>
+                                            <button type="submit" class="btn btn-primary" id="submit">
+                                                <i class="fas fa-save"></i> Update
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-                                <label for="password_confirmation">Confirm Password <span class="required">*</span></label>
-                                <input type="password" name="password_confirmation" class="form-control"
-                                    placeholder="Retype Password" required>
-                                <small class="text-danger">{{ $errors->first('password_confirmation') }}</small>
+                <!-- Administrator List Card -->
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Administrator List</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="admin-table" class="table table-striped table-hover">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th width="5%">#</th>
+                                            <th>User</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if ($users && count($users) > 0)
+                                            @foreach ($users as $key => $user)
+                                                <tr data-id="{{ $user->id }}" class="cursor-pointer">
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar-circle-sm mr-2"
+                                                                style="background-color: #{{ substr(md5($user->email), 0, 6) }}">
+                                                                {{ substr($user->name, 0, 1) }}
+                                                            </div>
+                                                            {{ $user->name }}
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ $user->email }}</td>
+                                                    <td>
+                                                        @if ($user->role == 'S')
+                                                            <span class="badge bg-danger">SuperAdmin</span>
+                                                        @else
+                                                            <span class="badge bg-info">Administrator</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted py-3">
+                                                    No administrators found
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
 
-                            <input type="hidden" name="role" value="S">
+    <!-- Create Admin Modal -->
+    <div class="modal fade" id="createAdmin" tabindex="-1" aria-labelledby="createAdminLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title text-white" id="createAdminLabel">
+                        <i class="fas fa-user-shield me-2"></i>Create Administrator Account
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ action([App\Http\Controllers\UsersController::class, 'store']) }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="role" value="S">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Administrator Name <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" name="name" value="{{ old('name') }}"
+                                class="form-control @error('name') is-invalid @enderror" placeholder="Enter Name"
+                                required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <div class="modal-footer">
-                            <div class="btn-group pull-right">
-                                <button type="reset" class="btn btn-default">Clear</button>
-                                <button type="submit" class="btn btn-wave">Create</button>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address <span
+                                    class="text-danger">*</span></label>
+                            <input type="email" name="email" value="{{ old('email') }}"
+                                class="form-control @error('email') is-invalid @enderror"
+                                placeholder="eg: admin@example.com" required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="password" name="password"
+                                    class="form-control @error('password') is-invalid @enderror"
+                                    placeholder="Enter Password" required id="password">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
                             </div>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">Password must be at least 6 characters long</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password_confirmation" class="form-label">Confirm Password <span
+                                    class="text-danger">*</span></label>
+                            <input type="password" name="password_confirmation"
+                                class="form-control @error('password_confirmation') is-invalid @enderror"
+                                placeholder="Retype Password" required>
+                            @error('password_confirmation')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="reset" class="btn btn-warning">Clear</button>
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changepass" tabindex="-1" aria-labelledby="changepassLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="changepassLabel">
+                        <i class="fas fa-key me-2"></i>Change Password
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="cpass-form">
+                        <input type="hidden" id="cpid" value="">
+
+                        <div class="mb-3">
+                            <label for="cpassword" class="form-label">Current Password</label>
+                            <div class="input-group">
+                                <input type="password" id="cpassword" name="current_password" class="form-control"
+                                    required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small id="cpassword_error" class="text-danger"></small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">New Password</label>
+                            <div class="input-group">
+                                <input id="new_password" type="password" class="form-control" name="new_password"
+                                    required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small id="new_pass_error" class="text-danger"></small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm New Password</label>
+                            <div class="input-group">
+                                <input id="confirm_password" type="password" class="form-control"
+                                    name="confirm_password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div id="match-pass" class="mt-1"></div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning" id="submit-password">
+                                <i class="fas fa-sync-alt me-1"></i>Update Password
+                            </button>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
-        <div id="changepass" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title text-center">Change Password</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form id="cpass-form">
-                            <input type="hidden" id="cpid" value="">
-                            <div class="form-group">
-                                <label for="cpassword">Current Password</label>
-                                <div class="input-group">
-                                    <input type="password" id="cpassword" name="current_password" class="form-control"
-                                        value="" required>
-                                    <div class="input-group-addon">
-                                        <span class="fa fa-eye-slash togglepass" aria-hidden="true"></span>
-                                    </div>
-                                </div>
-                                <small id="cpassword_error" class="text-danger"></small>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">New Password</label>
-                                <div class="input-group">
-                                    <input id="new_password" type="password" class="form-control" name="new_password"
-                                        value="" required>
-                                    <div class="input-group-addon">
-                                        <span class="fa fa-eye-slash togglepass" aria-hidden="true"></span>
-                                    </div>
-                                </div>
-                                <small id="new_pass_error" class="text-danger"></small>
-                            </div>
-                            <div class="form-group=">
-                                <label for="confirm_password">Confirm New Password</label>
-                                <div class="input-group">
-                                    <input id="confirm_password" type="password" class="form-control"
-                                        name="confirm_password" value="" required>
-                                    <div class="input-group-addon">
-                                        <span class="fa fa-eye-slash togglepass" aria-hidden="true"></span>
-                                    </div>
-                                </div>
-                                <small id="match-pass" class="text-danger"></small>
-                            </div>
-                            <br><br>
-                            <div id="form-group">
-                                <center><button class="btn btn-primary" style="width: 100%"
-                                        id="submit">Update</button></center>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="jumbotron admin-box">
-                    <a type="button" id="edit" class="btn btn-info btn-xs" title="Edit" style="float:right;"><i
-                            class="fa fa-edit"></i></a>
-                    <br>
-                    <div class="row box-flex">
-                        <div class="col-md-4" style="position: relative">
-                            @php
-                                $color = App\Models\Color::where('user_id', $auth->id)->select('profile_color')->get();
-                                if ($userInfo->isEmpty()) {
-                                    $userInfo = App\Models\User::where('id', '=', 1)->get();
-                                }
+    </div>
+@endsection
 
-                                $userInfo = $userInfo[0];
-                                $color = $color[0] ?? '';
-                            @endphp
-                            <center>
-                                <div class="profile-circle-admin"
-                                    style="background-color: {{ $color?->profile_color ?? 'blue' }}">
-                                    <p id="admin-name-profile">{{ substr($userInfo->name, 0, 1) }}</p>
-                                </div>
-                            </center>
-                        </div>
-                        <div class="col-md-8">
-                            <form id="adminForm">
-                                <input type="hidden" id="id" value="{{ $userInfo->id }}">
-                                <div class="form-group">
-                                    <label for="dname">Name</label>
-                                    <input type="text" class="form-control" id="dname"
-                                        value="{{ $userInfo->name }}" disabled>
-                                </div>
-                                <div class="form-group">
-                                    <label for="demail">Email Address</label>
-                                    <input type="email" class="form-control" id="demail"
-                                        value="{{ $userInfo->email }}" disabled>
-                                </div>
-                                <div class="form-group">
-                                    <label for="drole">Role</label>
-                                    <input type="text" class="form-control" id="drole"
-                                        value="{{ $userInfo->role == 'S' ? 'SuperAdmin' : 'Administrator' }}" disabled>
-                                </div>
+@push('styles')
+    <style>
+        .cursor-pointer {
+            cursor: pointer;
+        }
 
-                                <div id="btn-box" class="clearfix" style="display:none">
-                                    <a id="cpassbtn" data-id={{ $userInfo->id }} data-toggle="modal"
-                                        data-target="#changepass" data-backdrop="static" data-keyboard="false"
-                                        style="float:right" href="">Change Password</a><br><br>
-                                    <button class="btn btn-primary" id="submit" style="float:right">Update</button>
-                                    <button class="btn btn-default" id="cancel"
-                                        style="float:right;margin-right:10px">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5">
-                <div class="admin-box">
-                    <h4 style="text-align: center">Administrator List</h4>
-                    <table id="admin-table" class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>User</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if ($users)
-                                @php($n = 1)
-                                @foreach ($users as $key => $user)
-                                    <tr data-id={{ $user->id }}>
-                                        <td>
-                                            {{ $n }}
-                                            @php($n++)
-                                        </td>
-                                        <td>{{ $user->name }}</td>
-                                        <td>{{ $user->email }}</td>
-                                        <td>{{ $user->role == 'S' ? 'SuperAdmin' : 'Administrator' }}</td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col-md-1"></div>
-        </div>
-    @endif
+        .cursor-pointer:hover {
+            background-color: #f5f5f5 !important;
+        }
+
+        .profile-circle-admin {
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .avatar-circle-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .table tr.selected {
+            background-color: #e3f2fd !important;
+        }
+
+        .input-group-text {
+            cursor: pointer;
+        }
+
+        .badge {
+            font-size: 0.85em;
+            padding: 0.35em 0.65em;
+        }
+    </style>
+@endpush
+
+@push('scripts')
     <script>
         $(document).ready(function() {
+            // Initialize DataTable
+            $('#admin-table').DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+                "pageLength": 10,
+                "order": [
+                    [0, 'asc']
+                ],
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='fas fa-chevron-left'></i>",
+                        "next": "<i class='fas fa-chevron-right'></i>"
+                    }
+                }
+            });
 
-            $("tr").on("click", function() {
+            // Row click event for admin table
+            $("#admin-table tbody").on("click", "tr", function() {
+                // Remove selection from all rows
+                $("#admin-table tbody tr").removeClass('selected');
+                // Add selection to clicked row
+                $(this).addClass('selected');
+
                 var data_id = $(this).data('id');
+
                 $.ajax({
                     type: "GET",
                     url: "{{ route('details') }}",
@@ -235,26 +383,54 @@
                         $('#id').val(response.data.id);
                         $('#cpassbtn').data('id', response.data.id);
                         $('#admin-name-profile').text(response.fl);
-                        $('#drole').val((response.data.role == 'S') ? 'SuperAdmin' :
+                        $('#drole').val(response.data.role == 'S' ? 'SuperAdmin' :
                             'Administrator');
-                        $('.profile-circle-admin').css('background-color', response.color
-                            .profile_color);
+                        if (response.color && response.color.profile_color) {
+                            $('.profile-circle-admin').css('background-color', response.color
+                                .profile_color);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading admin details:", error);
                     }
                 });
-                return false;
             });
 
+            // Edit button click
+            $("#edit").on('click', function(event) {
+                event.preventDefault();
+                $('#dname').prop("disabled", false);
+                $('#demail').prop("disabled", false);
+                $('#btn-box').show();
+            });
+
+            // Cancel button click
+            $("#cancel").on('click', function(event) {
+                event.preventDefault();
+                $('#dname').prop("disabled", true);
+                $('#demail').prop("disabled", true);
+                $('#btn-box').hide();
+            });
+
+            // Admin form submission
             $('#adminForm').on('submit', function(event) {
                 event.preventDefault();
                 let id = $('#id').val();
                 let name = $('#dname').val();
                 let email = $('#demail').val();
 
+                if (!id || !name || !email) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Please select an administrator first!',
+                    });
+                    return;
+                }
+
                 $.ajax({
                     url: "{{ route('updateAdmin') }}",
                     type: "POST",
-                    cache: false,
-                    dataType: 'json',
                     data: {
                         '_token': "{{ csrf_token() }}",
                         'id': id,
@@ -264,20 +440,36 @@
                     success: function(response) {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Updated',
-                            text: 'Some details has been updated!',
-                        }).then((result) => {
-                            ajaxCall('{{ url('/admin/admin_list') }}', 'adminlist');
+                            title: 'Updated!',
+                            text: 'Admin details have been updated successfully!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
                         });
                     },
-                    error: function(response) {
+                    error: function(xhr) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong!'
+                            title: 'Error!',
+                            text: xhr.responseJSON?.message || 'Something went wrong!'
                         });
                     }
                 });
+            });
+
+            // Password change form
+            $("#cpassbtn").on('click', function() {
+                let id = $(this).data('id');
+                if (!id) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning',
+                        text: 'Please select an administrator first!',
+                    });
+                    return false;
+                }
+                $('#cpid').val(id);
             });
 
             $('#cpass-form').on('submit', function(event) {
@@ -287,11 +479,21 @@
                 let password_confirmation = $('#confirm_password').val();
                 let user_id = $('#cpid').val();
 
+                // Validate passwords match
+                if (password !== password_confirmation) {
+                    $('#match-pass').html('<span class="text-danger">Passwords do not match!</span>');
+                    return;
+                }
+
+                // Validate password length
+                if (password.length < 6) {
+                    $('#new_pass_error').text('Password must be at least 6 characters!');
+                    return;
+                }
+
                 $.ajax({
                     url: "{{ route('change.password') }}",
                     type: "POST",
-                    cache: false,
-                    dataType: 'json',
                     data: {
                         '_token': "{{ csrf_token() }}",
                         'current_password': current_pass,
@@ -300,74 +502,86 @@
                         'user_id': user_id,
                     },
                     success: function(response) {
-                        if (response.success == true)
+                        if (response.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Updated',
-                                text: 'Password has been changed!',
+                                title: 'Success!',
+                                text: 'Password has been changed successfully!',
+                                timer: 2000,
+                                showConfirmButton: false
                             }).then(() => {
                                 $('#changepass').modal('hide');
-                                ajaxCall('{{ url('/admin/admin_list') }}', 'adminlist');
+                                $('#cpass-form')[0].reset();
+                                $('#match-pass').empty();
+                                $('#new_pass_error').empty();
+                                $('#cpassword_error').empty();
                             });
-                        else
-                            $('#cpassword_error').text('Current Password Incorrect!');
+                        } else {
+                            $('#cpassword_error').text(response.message ||
+                                'Current password is incorrect!');
+                        }
                     },
-                    error: function(response, status) {
+                    error: function(xhr) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong connecting to server!',
+                            title: 'Error!',
+                            text: xhr.responseJSON?.message || 'Something went wrong!'
                         });
                     }
                 });
             });
 
-            $("#edit").on('click', function(event) {
-                event.preventDefault();
-                $('#dname').prop("disabled", false);
-                $('#demail').prop("disabled", false);
-                $('#btn-box').show();
-            });
-            $("#cancel").on('click', function(event) {
-                event.preventDefault();
-                $('#dname').prop("disabled", true);
-                $('#demail').prop("disabled", true);
-                $('#btn-box').hide();
-            });
-            $("#cpassbtn").on('click', function(event) {
-                let id = $(this).data('id');
-                $('#cpid').val(id);
-            });
-
+            // Password match validation
             $('#confirm_password').on('keyup', function() {
                 if ($('#new_password').val() == $('#confirm_password').val()) {
-                    $('#match-pass').html('Password Match').css('color', 'green');
-                } else
-                    $('#match-pass').html('Password does not match!').css('color', 'maroon');
+                    $('#match-pass').html(
+                        '<span class="text-success"><i class="fas fa-check"></i> Passwords match</span>'
+                        );
+                } else {
+                    $('#match-pass').html(
+                        '<span class="text-danger"><i class="fas fa-times"></i> Passwords do not match</span>'
+                        );
+                }
             });
 
-            $('#new_password').on('focusout', function() {
+            // New password validation
+            $('#new_password').on('blur', function() {
                 var npass = $(this).val();
-                if (npass.length < 6) {
-                    $('#new_pass_error').text('Password must atleast 6 characters length!')
-                } else
+                if (npass.length > 0 && npass.length < 6) {
+                    $('#new_pass_error').text('Password must be at least 6 characters long!');
+                } else {
                     $('#new_pass_error').empty();
+                }
             });
 
-            $('.togglepass').on('click', function() {
-                $(this).toggleClass("fa-eye-slash fa-eye");
-                var input = '#' + $(this).parent('div').prev('input').prop('id');
-                $(input).attr('type') === 'password' ? $(input).attr('type', 'text') : $(input).attr('type',
-                    'password');
-            });
+            // Toggle password visibility
+            function togglePasswordVisibility(inputId, buttonId) {
+                $(buttonId).on('click', function() {
+                    const input = $(inputId);
+                    const icon = $(this).find('i');
+                    if (input.attr('type') === 'password') {
+                        input.attr('type', 'text');
+                        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                    } else {
+                        input.attr('type', 'password');
+                        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                    }
+                });
+            }
 
-            $(".close").click(function() {
-                $('#cpass-form').trigger("reset");
-                $('#new_pass_error').empty();
+            // Initialize password toggles
+            togglePasswordVisibility('#password', '#togglePassword');
+            togglePasswordVisibility('#cpassword', '#toggleCurrentPassword');
+            togglePasswordVisibility('#new_password', '#toggleNewPassword');
+            togglePasswordVisibility('#confirm_password', '#toggleConfirmPassword');
+
+            // Reset form when modal closes
+            $('#changepass').on('hidden.bs.modal', function() {
+                $('#cpass-form')[0].reset();
                 $('#match-pass').empty();
-                $('cpassword_error').empty();
+                $('#new_pass_error').empty();
+                $('#cpassword_error').empty();
             });
-
         });
     </script>
-@endsection
+@endpush

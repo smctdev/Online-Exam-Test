@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Setting;
 use App\Models\Question;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,5 +33,7 @@ class AppServiceProvider extends ServiceProvider
             $c_questions = Question::count();
             $view->with(['auth' => $auth, 'setting' => $setting, 'c_questions' => $c_questions]);
         });
+        Paginator::useBootstrap();
+        Model::automaticallyEagerLoadRelationships();
     }
 }

@@ -1,102 +1,126 @@
 @extends('layouts.admin', [
-  'dash' => 'active',
-  'examinees' => '',
-  'quiz' => '',
-  'users' => '',
-  'questions' => '',
-  'sett' => ''
+    'dash' => 'active',
+    'examinees' => '',
+    'quiz' => '',
+    'users' => '',
+    'questions' => '',
+    'sett' => '',
 ])
 
 @section('content')
-@include('message')
-<!---->
+    @include('message')
 
-<div class="container" >
-  <h2>Welcome to Smct Online Exam Administration Panel.</h2>
-  <br><br>
-  <div class="row">
-    <div class="col-md-6">
-      <div style="display: flex;flex-flow: row wrap; justify-content:space-between">
-        <div class="dash-box">
-          <div class="dash">
-            <p>{{$admin_count}}</p>
-            <div class="dash-icons">
-              <i class="fa fa-shield"></i> Administrators
-            </div>
-          </div>
-        </div>
-        <div class="dash-box" style="background-color: #34495E !important">
-          <div class="dash">
-            <p>{{$examinee_count}}</p>
-            <div class="dash-icons">
-              <i class="fa fa-users"></i> Examinees
-            </div>
-          </div>
-        </div>
-        <div class="dash-box" style="background-color: #7DCE56 !important">
-          <div class="dash">
-            <p>{{$topics}}</p>
-            <div class="dash-icons">
-              <i class="fa fa-book"></i> Subjects
-            </div>
-          </div>
-        </div>
-        <div class="dash-box">
-          <div class="dash">
-            <p>{{$completed_count}}</p>
-            <div class="dash-icons">
-              <i class="fa fa-check-circle-o"></i> Completed
-            </div>
-          </div>
-        </div>
-        <div class="dash-box">
-          <div class="dash">
-            <p>{{$pending_count}}</p>
-            <div class="dash-icons">
-              <i class="fa fa-spinner"></i> Pending Exams
-            </div>
-          </div>
-        </div>
-        <div class="dash-box">
-          <div class="dash">
-            <p>0</p>
-            <div class="dash-icons">
-              <i class="fa fa-shield"></i> Administrators
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="notify-panel">
-        <h5>Notification Panel</h5>
-        <div class="notify-panel-box">
-          @if(!empty($notify))
-          <ul class="d-flex gap-2">
-            @foreach ($notify  as $key)
-            <li>
-              <a href="javascript:ajaxCall('{{route('exam.result', ['id' => $key->id])}}','exam-result')">
-                <div class="row">
-                  <div class="col-sm-2"><div class="profile-circle-ex" ><p>{{substr($key->name,0,1)}}</p></div></div>
-                  <div class="col-sm-6" style="line-height:.9;">
-                    <p style="font-size: 1.6rem">{{$key->name}}</p>
-                    <p style="font-size: 1.3rem" class="text-muted">Just Completed the exam.</p>
-                  </div>
-                  <div class="col-md-2" style="padding: 0 !important;">
-                    <p class="text-sm text-muted"><i class="fa fa-clock mr-1"></i> 4 hrs Ago</p>
-                  </div>
-                  <div class="col-md-2 text-success"><i class="fa fa-star fa-2x"></i></div>
+    <div class="container-fluid py-4">
+        <h2 class="mb-4">Welcome to SMCT Online Exam Administration Panel</h2>
+
+        <div class="row g-3">
+            <!-- Dashboard Cards -->
+            <div class="col-lg-6 col-md-12">
+                <div class="row g-3">
+
+                    <div class="col-6">
+                        <div class="card text-white bg-primary h-100">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div>
+                                    <h3 class="card-title">{{ $admin_count }}</h3>
+                                    <p class="card-text"><i class="fa fa-shield me-2"></i>Administrators</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="card text-white" style="background-color: #34495E;">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div>
+                                    <h3 class="card-title">{{ $examinee_count }}</h3>
+                                    <p class="card-text"><i class="fa fa-users me-2"></i>Examinees</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="card text-white" style="background-color: #7DCE56;">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div>
+                                    <h3 class="card-title">{{ $topics }}</h3>
+                                    <p class="card-text"><i class="fa fa-book me-2"></i>Subjects</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="card text-white bg-success h-100">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div>
+                                    <h3 class="card-title">{{ $completed_count }}</h3>
+                                    <p class="card-text"><i class="fa fa-check-circle me-2"></i>Completed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="card text-white bg-warning h-100">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div>
+                                    <h3 class="card-title">{{ $pending_count }}</h3>
+                                    <p class="card-text"><i class="fa fa-spinner me-2"></i>Pending Exams</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-              </a>
-            </li>
-            @endforeach
-          </ul>
-          @else
-          <center><img src="{{asset('images/vectors/zeronotif.jpeg')}}" style="width:90%"></center>
-          @endif
+            </div>
+
+            <!-- Notification Panel -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Notification Panel</h5>
+                    </div>
+                    <div @class([
+                        'card-body',
+                        'p-0' => $notify->isEmpty() && $notify->count() <= 0,
+                    ]) style="max-height: 500px; overflow-y:auto;">
+                        @if ($notify->isNotEmpty() && $notify->count() > 0)
+                            <ul class="list-unstyled">
+                                @foreach ($notify as $key)
+                                    <li class="mb-2">
+                                        <a href="{{ route('exam.result', $key->id) }}"
+                                            class="text-decoration-none text-dark">
+                                            <div class="d-flex align-items-center p-2 border rounded">
+                                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3"
+                                                    style="width:40px; height:40px;">
+                                                    <span
+                                                        class="text-white fw-bold">{{ strtoupper(substr($key->name, 0, 1)) }}</span>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <p class="mb-0 fw-bold">{{ $key->name }}</p>
+                                                    <small class="text-muted">Just Completed the exam.</small>
+                                                </div>
+                                                <div class="text-end ms-2">
+                                                    <small class="text-muted"><i
+                                                            class="fa fa-clock me-1"></i>{{ $key->result->created_at->diffForHumans() }}</small>
+                                                    <div class="text-success mt-1"><i class="fa fa-star"></i></div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <div class="text-center">
+                                <img src="{{ asset('images/vectors/zeronotif.jpeg') }}" class="img-fluid w-100"
+                                    alt="No Notifications">
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-</div>
 @endsection

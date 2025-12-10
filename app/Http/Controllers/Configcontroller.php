@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,8 +24,10 @@ class Configcontroller extends Controller
 
         ];
         $token = Auth::user()?->token;
-        $notify = DB::table('users')->where('token', $token)->select('name')->get();
-        $notify = $notify->toArray();
+        $notify = User::with('result')
+            ->whereHas('result')
+            ->where('notify', 1)
+            ->get();
         return view('admin.mailsetting.mailset', compact('env_files', 'notify'));
     }
 

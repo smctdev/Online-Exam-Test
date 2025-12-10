@@ -25,8 +25,10 @@ class AdminController extends Controller
 {
     public function index(Request $request)
     {
-        $notify = DB::table('users')->where('notify', 1)->get();
-        $notify = $notify->toArray();
+        $notify = User::with('result')
+            ->whereHas('result')
+            ->where('notify', 1)
+            ->get();
         $topics = Topic::count();
         $admin_count = User::where('role', '=', 'A')->count();
         $examinee_count = User::where('role', '=', 'E')->count();
@@ -160,10 +162,12 @@ class AdminController extends Controller
 
     public function applicants(Request $request)
     {
-        $notify = DB::table('users')->where('notify', 1)->get();
-        $notify = $notify->toArray();
-        $users = User::where('role', '!=', 'S')->orderBy('created_at', 'desc')->get();
-        $topics = Topic::all();
+        $notify = User::with('result')
+            ->whereHas('result')
+            ->where('notify', 1)
+            ->get();
+        $users = User::where('role', '!=', 'S')->orderBy('created_at', 'desc')->paginate(10);
+        $topics = Topic::whereHas('question')->get();
         if ($request->ajax()) {
             return view('admin.examinees', compact('users', 'notify', 'topics'))->renderSections()['content'];
         }
@@ -172,8 +176,10 @@ class AdminController extends Controller
 
     public function adminlist(Request $request)
     {
-        $notify = DB::table('users')->where('notify', 1)->get();
-        $notify = $notify->toArray();
+        $notify = User::with('result')
+            ->whereHas('result')
+            ->where('notify', 1)
+            ->get();
         $users = User::where('role', '=', 'S')->orderBy('created_at', 'asc')->get();
         $userInfo = User::where('id', '=', 1)->get();
         if ($request->ajax()) {
@@ -196,8 +202,10 @@ class AdminController extends Controller
         $result = DB::table('result')->where('user_id', $id)->select('score')->get();
         $users = User::where('status', 'finish')->get();
         User::where('id', $id)->update(['notify' => 0]);
-        $notify = DB::table('users')->where('notify', 1)->select('name', 'id')->get();
-        $notify = $notify->toArray();
+        $notify = User::with('result')
+            ->whereHas('result')
+            ->where('notify', 1)
+            ->get();
         if ($request->ajax()) {
             return view('partial.result', compact('result', 'user', 'notify', 'users', 'essay'))->renderSections()['content'];
         }

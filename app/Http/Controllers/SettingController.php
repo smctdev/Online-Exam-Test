@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class SettingController extends Controller
@@ -27,8 +28,10 @@ class SettingController extends Controller
 
         ];
         $settings = Setting::all();
-        $notify = DB::table('users')->where('notify', 1)->get();
-        $notify = $notify->toArray();
+        $notify = User::with('result')
+            ->whereHas('result')
+            ->where('notify', 1)
+            ->get();
         if ($request->ajax()) {
             return view('admin.settings', compact('settings', 'notify', 'env_files'))->renderSections()['content'];
         }

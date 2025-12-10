@@ -12,7 +12,7 @@ class Essay extends Model
         'user_id',
         'situation',
         'answer',
-        'mark'
+        'mark',
     ];
 
     public function user()

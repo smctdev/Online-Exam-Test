@@ -257,7 +257,7 @@ a:focus {
   padding: 15px 15px;
   font-family: fontAwesome;
   color: dimgray !important;
-  
+
 }
 /* .main-header .sidebar-toggle:before {
   content: "\f0c9";
@@ -461,7 +461,7 @@ a:focus {
 }
 .sidebar {
   padding-bottom: 10px;
-  
+
 }
 .sidebar-form input:focus {
   border-color: transparent;
@@ -508,18 +508,18 @@ a:focus {
   list-style: none;
   margin: 0;
   padding: 0;
-  
+
 }
 .sidebar-menu > li {
   position: relative;
   margin: 0;
   padding: 0;
-  
+
 }
 .sidebar-menu > li > a {
   padding: 12px 5px 12px 15px;
   display: block;
-  
+
 }
 .sidebar-menu > li > a > .fa,
 .sidebar-menu > li > a > .glyphicon,
@@ -1757,7 +1757,7 @@ a:focus {
   right: 10px;
   top: 5px;
 }
-.box-header > .box-tools [data-toggle="tooltip"] {
+.box-header > .box-tools [data-bs-toggle="tooltip"] {
   position: relative;
 }
 .box-header > .box-tools.pull-right .dropdown-menu {
@@ -5190,11 +5190,11 @@ table.text-center th {
 .skin-black .main-sidebar {
   background-color: #192A53 !important;
   border: none;
-  
+
 }
 .skin-black .sidebar-menu > li{
   line-height:35px;
-  
+
 }
 .skin-black .sidebar-menu > li > a {
   color:silver;
@@ -5273,7 +5273,7 @@ span.required {
 /* Darker background on mouse-over */
 .dash-menu >.btn:hover {
   background-color: RoyalBlue;
-  
+
 }
 .slim-menu{
   background-color:#fff;
@@ -5359,7 +5359,7 @@ box-shadow: 0px 0px 11px 0.5px rgba(179,163,179,1);
   width:30%;
   margin-top: 3%;
   padding:10px;
-  vertical-align:middle; 
+  vertical-align:middle;
   text-align:center;
   -webkit-box-shadow: 6px 7px 5px 0px rgba(148,142,148,1);
   -moz-box-shadow: 6px 7px 5px 0px rgba(148,142,148,1);
@@ -5384,7 +5384,7 @@ box-shadow: 0px 0px 11px 0.5px rgba(179,163,179,1);
   padding: 0 !important;
 }
 .notify-panel-box ul li{
-  background-color: whitesmoke; 
+  background-color: whitesmoke;
   padding:10px;
   vertical-align:middle;
   list-style-type: none;
@@ -5411,7 +5411,7 @@ box-shadow: 0px 0px 11px 0.5px rgba(179,163,179,1);
   vertical-align:middle;
   text-align: center;
   border-radius: 50%;
-  
+
 }
 .profile-circle-admin p{
   margin: auto;

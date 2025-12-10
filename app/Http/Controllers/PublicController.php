@@ -48,8 +48,10 @@ class PublicController extends Controller
         if (!Helper::hasResult($token)) {
             User::where('token', $token)->update(['notify' => 1]);
             Helper::calculateResult($token);
-            $notify = DB::table('users')->where('notify', 1)->select('name', 'id')->get();
-            $notify = $notify->toArray();
+            $notify = User::with('result')
+                ->whereHas('result')
+                ->where('notify', 1)
+                ->get();
             $admins = User::where('role', 'A')->get();
             //event(new ExamSubmitted($notify));
             //Notification::send($admins, new StatusNotification($notify));
